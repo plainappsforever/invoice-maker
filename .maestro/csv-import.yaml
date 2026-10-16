@@ -1,0 +1,68 @@
+appId: ${APP_ID}
+name: CSV import - preview counts (2 ready, 1 duplicate, 1 skipped with its line), import, the clients are in the list
+tags:
+  - v15p1
+---
+# V1.5 P1 (Idea-b). The dev row feeds a bundled German CSV (BOM, `;`) through the same preview and import as a picked
+# file; the system file picker itself is a real-phone check.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- openLink: invoicemaker-dev://data
+- tapOn:
+    text: Open
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: import-sample-clients
+    centerElement: true
+- tapOn:
+    id: import-sample-clients
+- scrollUntilVisible:
+    element:
+      id: import-summary
+    centerElement: true
+- assertVisible:
+    id: import-summary
+    text: "2 ready to import · 1 already there · 1 skipped"
+- assertVisible:
+    id: import-problem-5
+    text: "Line 5: no name \\(skipped\\)"
+- scrollUntilVisible:
+    element:
+      id: import-confirm
+    centerElement: true
+- tapOn:
+    id: import-confirm
+- scrollUntilVisible:
+    element:
+      id: import-message
+    centerElement: true
+- assertVisible:
+    id: import-message
+    text: 2 clients imported.
+- scrollUntilVisible:
+    element:
+      id: import-sample-items
+    centerElement: true
+- tapOn:
+    id: import-sample-items
+- scrollUntilVisible:
+    element:
+      id: import-confirm
+    centerElement: true
+- tapOn:
+    id: import-confirm
+- scrollUntilVisible:
+    element:
+      id: import-message
+    centerElement: true
+- assertVisible:
+    id: import-message
+    text: 2 items imported.
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-clients
+- assertVisible: "(?s).*Beta AG.*"
+- assertVisible: "(?s).*Max Muster.*"

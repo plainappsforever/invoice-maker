@@ -1,0 +1,44 @@
+appId: ${APP_ID}
+name: Release - issued invoice shows page 1, Share names the PDF, Mark as sent
+tags:
+  - release
+---
+# Run after release/repeat-invoice (an issued invoice for "Mueller GmbH" exists). Same checks as the dev pdf-share flow,
+# on the Release build (embedded bundle, no dev tools).
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    text: ".*RE-20.*Mueller.*"
+- assertVisible:
+    id: open-preview
+- assertVisible:
+    id: doc-status
+    text: Issued
+- tapOn:
+    id: action-share
+- extendedWaitUntil:
+    visible: "RE-20\\d\\d-\\d{4} Mueller GmbH(\\.pdf)?"
+    timeout: 30000
+- runFlow: ../subflows/dismiss-share.yaml
+# (the PDF size label `pdf-info` is dev-only, hidden at runtime in Release)
+- scrollUntilVisible:
+    element:
+      id: mark-sent-bar
+    centerElement: true
+- assertVisible:
+    id: mark-sent-bar
+- tapOn:
+    id: mark-sent
+- assertVisible:
+    id: sent-on
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+- assertVisible:
+    id: doc-status
+    text: Sent

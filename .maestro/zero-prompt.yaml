@@ -1,0 +1,33 @@
+appId: ${APP_ID}
+name: Zero prompt - first launch shows no dialog and New invoice works at once
+tags:
+  - core
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+# A fresh process after the reset is the first-launch experience (D29): no onboarding, no permission prompt.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- assertVisible:
+    id: setup-card
+- assertNotVisible:
+    text: Allow.*
+# Android system dialogs (notification / photo permission) and iOS alerts
+- assertNotVisible:
+    id: .*permission_allow.*
+- assertNotVisible:
+    text: Don.t allow.*
+- assertNotVisible:
+    text: .*Rate .*
+- tapOn:
+    id: new-document
+- assertVisible:
+    id: editor-screen
+- assertVisible:
+    id: issue-button

@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+---
+# Leave the screen the way a user does without any button: iOS = swipe from the left edge (interactive pop),
+# Android = the system Back (gesture or button). Nothing is tapped on the form itself (review #7).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 0%,50%
+          end: 85%,50%
+          duration: 400
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

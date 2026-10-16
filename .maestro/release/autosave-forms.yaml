@@ -1,0 +1,113 @@
+appId: ${APP_ID}
+name: Release - a line, a client and an item survive a back-swipe and an app kill without Done
+tags:
+  - release
+---
+# Same as the dev flow autosave-forms, without seed links. The new draft is the newest one, so it is the first row.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: new-document
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Swiped line
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: line-price
+- inputText: "12.50"
+- runFlow: ../subflows/hide-keyboard.yaml
+- runFlow: ../subflows/back-swipe.yaml
+- extendedWaitUntil:
+    visible:
+      id: add-line
+    timeout: 20000
+- scrollUntilVisible:
+    element:
+      text: .*Swiped line.*
+    centerElement: true
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Killed line
+- runFlow:
+    file: ../subflows/wait.yaml
+    env:
+      MS: "1500"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: "doc-row-\\d+"
+    index: 0
+- scrollUntilVisible:
+    element:
+      text: .*Killed line.*
+    centerElement: true
+- assertVisible: .*Swiped line.*
+- runFlow: ../subflows/go-back.yaml
+- tapOn:
+    id: tab-clients
+- tapOn:
+    id: new-client
+- tapOn:
+    id: client-name
+- inputText: Swiped Client GmbH
+- runFlow: ../subflows/hide-keyboard.yaml
+- runFlow: ../subflows/back-swipe.yaml
+- extendedWaitUntil:
+    visible:
+      id: new-client
+    timeout: 20000
+- assertVisible: .*Swiped Client GmbH.*
+- tapOn:
+    id: new-client
+- tapOn:
+    id: client-name
+- inputText: Killed Client AG
+- runFlow:
+    file: ../subflows/wait.yaml
+    env:
+      MS: "1500"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-clients
+- assertVisible: .*Killed Client AG.*
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-items
+- tapOn:
+    id: new-item
+- tapOn:
+    id: item-name
+- inputText: Swiped item
+- runFlow: ../subflows/hide-keyboard.yaml
+- runFlow: ../subflows/back-swipe.yaml
+- extendedWaitUntil:
+    visible:
+      id: new-item
+    timeout: 20000
+- assertVisible: .*Swiped item.*

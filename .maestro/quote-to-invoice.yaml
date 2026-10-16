@@ -1,0 +1,80 @@
+appId: ${APP_ID}
+name: Quote to invoice - issue quote, accept, convert, issue invoice
+tags:
+  - core
+---
+# SPEC §7 flow 3. Quotes have their own series (AN-…); the converted invoice is a draft with all lines.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: repeat
+- tapOn:
+    id: tab-quotes
+- tapOn:
+    id: new-document
+- tapOn:
+    id: client-row
+- tapOn:
+    id: pick-client-1
+- scrollUntilVisible:
+    element:
+      id: add-item
+    centerElement: true
+- tapOn:
+    id: add-item
+- tapOn:
+    id: pick-item-1
+- tapOn:
+    id: picker-done
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: doc-number
+    text: AN-20\d\d-0001
+- assertVisible:
+    id: doc-status
+    text: Issued
+- scrollUntilVisible:
+    element:
+      id: action-accept
+    centerElement: true
+- tapOn:
+    id: action-accept
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Accepted
+- scrollUntilVisible:
+    element:
+      id: action-convert
+    centerElement: true
+- tapOn:
+    id: action-convert
+- assertVisible:
+    id: editor-screen
+- assertVisible: (?s).*Webdesign.*
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0001
+- scrollUntilVisible:
+    element:
+      id: totals-gross
+    centerElement: true
+- assertVisible:
+    id: totals-gross
+    text: €101.15
+- runFlow: subflows/go-back.yaml
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-quotes
+- assertVisible: (?s).*Invoiced.*

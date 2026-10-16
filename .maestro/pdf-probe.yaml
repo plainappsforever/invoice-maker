@@ -1,0 +1,50 @@
+appId: ${APP_ID}
+name: PDF probe - expo-print files on this device (pages, size, fonts, stability), real layout room, tall-row refusal
+tags:
+  - p5
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- openLink: invoicemaker-dev://debug/pdf
+- tapOn:
+    text: Open
+    optional: true
+- tapOn:
+    id: debug-pdf-probe
+- extendedWaitUntil:
+    visible:
+      id: pdf-probe-summary
+    timeout: 300000
+- assertVisible:
+    id: pdf-probe-summary
+    text: "PDFPROBE (\\d+)/\\1 ok.*"
+- scrollUntilVisible:
+    element:
+      id: debug-layout-probe
+    centerElement: true
+- tapOn:
+    id: debug-layout-probe
+- scrollUntilVisible:
+    element:
+      id: layout-probe-summary
+    timeout: 120000
+    centerElement: true
+- assertVisible:
+    id: layout-probe-summary
+    text: "LAYOUT (\\d+)/\\1 ok"
+- scrollUntilVisible:
+    element:
+      id: debug-tall-probe
+    centerElement: true
+- tapOn:
+    id: debug-tall-probe
+- scrollUntilVisible:
+    element:
+      id: tall-probe-summary
+    timeout: 60000
+    centerElement: true
+- assertVisible:
+    id: tall-probe-summary
+    text: TALL 2/2 ok

@@ -1,0 +1,36 @@
+appId: ${APP_ID}
+name: Release - the system print dialog opens with the PDF and can be dismissed
+tags:
+  - release
+---
+# Run after release/repeat-invoice (an issued invoice for "Mueller GmbH" exists).
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    text: ".*RE-20.*Mueller.*"
+- tapOn:
+    id: action-print
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible: Page 1 of 1
+          timeout: 60000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible: Select a printer
+          timeout: 60000
+- runFlow: ../subflows/dismiss-print.yaml
+- extendedWaitUntil:
+    visible:
+      id: document-screen
+    timeout: 15000
+- assertNotVisible: ".*did not complete.*"

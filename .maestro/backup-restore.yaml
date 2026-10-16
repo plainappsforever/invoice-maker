@@ -1,0 +1,125 @@
+appId: ${APP_ID}
+name: "Backup and restore - back up, delete all, restore: identical data hash (A11), summary before the restore"
+tags:
+  - p6
+---
+# SPEC A11. The debug label `data-hash` is a hash over every row a backup carries. Back up → note the hash → delete
+# everything (two steps) → hash differs → restore the file made on this phone (dev button, the real picker is a system
+# screen) → summary → confirm → the same hash and the invoice is back.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-data
+- tapOn:
+    id: backup-now
+- extendedWaitUntil:
+    visible: "invoice-maker-backup-20\\d\\d-\\d\\d-\\d\\d(\\.json)?"
+    timeout: 30000
+- runFlow: subflows/dismiss-share-any.yaml
+- assertVisible:
+    id: backup-message
+    text: "Backup file ready: invoice-maker-backup-.*"
+- scrollUntilVisible:
+    element:
+      id: data-hash
+    centerElement: true
+- copyTextFrom:
+    id: data-hash
+- scrollUntilVisible:
+    element:
+      id: delete-all
+    centerElement: true
+- tapOn:
+    id: delete-all
+- tapOn: "Continue"
+- tapOn: "Delete everything"
+- assertVisible:
+    id: delete-message
+    text: All data was deleted.
+- assertNotVisible:
+    id: data-hash
+    text: ${maestro.copiedText}
+- scrollUntilVisible:
+    element:
+      id: restore-dev-last
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: restore-dev-last
+- scrollUntilVisible:
+    element:
+      id: restore-confirm
+    centerElement: true
+- assertVisible:
+    id: restore-summary
+- assertVisible:
+    id: restore-counts
+    text: "1 invoices, 0 cancellations.*1 clients.*"
+- tapOn:
+    id: restore-confirm
+- scrollUntilVisible:
+    element:
+      id: restore-message
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: restore-message
+    text: "Restored: 1 invoices.*"
+- scrollUntilVisible:
+    element:
+      id: data-hash
+    centerElement: true
+- assertVisible:
+    id: data-hash
+    text: ${maestro.copiedText}
+# A second restore over existing data keeps that data as the safety copy first (review 14, D92): "Undo" offers it.
+- scrollUntilVisible:
+    element:
+      id: restore-dev-last
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: restore-dev-last
+- scrollUntilVisible:
+    element:
+      id: restore-confirm
+    centerElement: true
+- tapOn:
+    id: restore-confirm
+- scrollUntilVisible:
+    element:
+      id: restore-safety
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: safety-hint
+- tapOn:
+    id: restore-safety
+- scrollUntilVisible:
+    element:
+      id: restore-cancel
+    centerElement: true
+- assertVisible:
+    id: restore-counts
+    text: "1 invoices, 0 cancellations.*1 clients.*"
+- tapOn:
+    id: restore-cancel
+# The invoice is back and its PDF is made again from the stored document.
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- tapOn:
+    id: doc-row-1
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0001
+- assertVisible:
+    id: open-preview

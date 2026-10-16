@@ -1,0 +1,111 @@
+appId: ${APP_ID}
+name: First invoice - client, line, check lists missing business details, Fix, Issue gives RE-2026-0001
+tags:
+  - core
+---
+# SPEC §7 flow 1. Money is typed with dots here: the decimal-pad of the simulator keyboard may lack the comma.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: new-document
+- assertVisible:
+    id: editor-screen
+- tapOn:
+    id: client-row
+- tapOn:
+    id: client-picker-search
+- inputText: Mueller GmbH
+- tapOn:
+    id: create-client
+- assertVisible:
+    id: client-row
+- assertVisible: (?s).*Mueller GmbH.*
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Webdesign
+- tapOn:
+    id: line-price
+- inputText: "100"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- assertVisible:
+    id: totals-gross
+    text: €119.00
+- tapOn:
+    id: issue-button
+# The check lists what is missing (information with a source), nothing is blocked.
+- assertVisible:
+    id: check-screen
+- assertVisible:
+    id: check-item-business_name
+- assertVisible:
+    id: check-not-advice
+- tapOn:
+    id: check-fix-business_name
+- assertVisible:
+    id: business-screen
+- tapOn:
+    id: business-name
+- inputText: Muster Design
+- tapOn:
+    id: business-street
+- inputText: Musterstrasse 1
+- tapOn:
+    id: business-postalCode
+- inputText: "10115"
+- tapOn:
+    id: business-city
+- inputText: Berlin
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: business-taxNumber
+    centerElement: true
+- tapOn:
+    id: business-taxNumber
+- inputText: 12/345/67890
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: business-iban
+    centerElement: true
+- tapOn:
+    id: business-iban
+- inputText: DE89370400440532013000
+- runFlow: subflows/hide-keyboard.yaml
+- runFlow:
+    file: subflows/wait.yaml
+    env:
+      MS: "900"
+- runFlow: subflows/go-back.yaml
+- assertVisible:
+    id: check-screen
+- assertNotVisible:
+    id: check-item-business_name
+- assertNotVisible:
+    id: check-item-business_address
+- tapOn:
+    id: issue-anyway
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0001
+- scrollUntilVisible:
+    element:
+      id: totals-gross
+    centerElement: true
+- assertVisible:
+    id: totals-gross
+    text: €119.00

@@ -1,0 +1,60 @@
+appId: ${APP_ID}
+name: Autosave - kill the app while editing, the draft is intact after reopening (A7)
+tags:
+  - core
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: repeat
+- tapOn:
+    id: new-document
+- scrollUntilVisible:
+    element:
+      id: reference
+    speed: 95
+    timeout: 90000
+    centerElement: true
+- tapOn:
+    id: reference
+- inputText: PO-4711
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: text-notes
+    speed: 95
+    timeout: 90000
+    centerElement: true
+- tapOn:
+    id: text-notes
+- inputText: Autosave survives a kill 123
+# 400 ms debounce, no blur, no Save button: wait 1.5 s, then kill the process.
+- runFlow:
+    file: subflows/wait.yaml
+    env:
+      MS: "1500"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: doc-row-1
+- scrollUntilVisible:
+    element:
+      id: text-notes
+    speed: 95
+    timeout: 90000
+    centerElement: true
+- assertVisible: Autosave survives a kill 123
+- scrollUntilVisible:
+    element:
+      id: reference
+    direction: UP
+    centerElement: true
+- assertVisible: PO-4711

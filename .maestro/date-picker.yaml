@@ -1,0 +1,34 @@
+appId: ${APP_ID}
+name: Date field - typed date is saved, the system date picker opens
+tags:
+  - core
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: new-document
+- tapOn:
+    id: issue-date
+- eraseText: 12
+- inputText: 2026-12-24
+- runFlow: subflows/hide-keyboard.yaml
+- assertVisible:
+    id: issue-date
+    text: 2026-12-24
+- tapOn:
+    id: issue-date-pick
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible: OK
+      - tapOn: OK
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: .*December 2026.*
+- assertVisible:
+    id: issue-date

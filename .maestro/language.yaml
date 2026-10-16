@@ -1,0 +1,36 @@
+appId: ${APP_ID}
+name: Language - the UI switches to German and back, the choice survives a restart
+tags:
+  - core
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-language
+- tapOn:
+    id: lang-de
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-settings
+- assertVisible: .*Sprache.*
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- assertVisible: Neue Rechnung
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-language
+- tapOn:
+    id: lang-system
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- assertVisible: Invoices

@@ -1,0 +1,22 @@
+appId: ${APP_ID}
+name: P3.5 probes - write queue, triggers, migrations 3-4 and JSON1 on real expo-sqlite
+tags:
+  - p35
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-debug
+- tapOn:
+    id: debug-probes
+- extendedWaitUntil:
+    visible:
+      id: probe-summary
+    timeout: 120000
+- assertVisible:
+    id: probe-summary
+    text: PROBES 11/11 ok

@@ -1,0 +1,90 @@
+appId: ${APP_ID}
+name: Attachments - a receipt photo printed as a page after the invoice (the issued PDF has 2 pages), another goes with the e-mail, printed pages stay locked
+tags:
+  - v15p1
+---
+# V1.5 P1 (N3). "Sample receipt (dev)" stores the bundled receipt photo through the same path as a scan/photo
+# (downscale, attachments/<uuid>.jpg, attachments row). The page count comes from the real print engine (pdf-info).
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: examples
+- openLink: invoicemaker-dev://document/1/edit
+- tapOn:
+    text: Open
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: attach-sample
+    centerElement: true
+- tapOn:
+    id: attach-sample
+- extendedWaitUntil:
+    visible:
+      id: attach-0-label
+      text: ".*Page.*"
+    timeout: 20000
+- scrollUntilVisible:
+    element:
+      id: attach-sample
+    centerElement: true
+- tapOn:
+    id: attach-sample
+- extendedWaitUntil:
+    visible:
+      id: attach-1-label
+    timeout: 20000
+- tapOn:
+    id: attach-1-use-mail
+- assertVisible:
+    id: attach-1-label
+    text: ".*E-mail.*"
+- scrollUntilVisible:
+    element:
+      id: attach-sample
+    centerElement: true
+- tapOn:
+    id: attach-sample
+- extendedWaitUntil:
+    visible:
+      id: attach-2-label
+    timeout: 20000
+- tapOn:
+    id: attach-2-remove
+- tapOn:
+    text: Delete
+- assertNotVisible:
+    id: attach-2-label
+- tapOn:
+    id: issue-button
+- extendedWaitUntil:
+    visible:
+      id: doc-number
+      text: RE-20\d\d-0001
+    timeout: 30000
+- tapOn:
+    id: action-share
+- extendedWaitUntil:
+    visible: "RE-20\\d\\d-0001 M.{1,2}ller GmbH(\\.pdf)?"
+    timeout: 60000
+- runFlow: subflows/dismiss-share.yaml
+- scrollUntilVisible:
+    element:
+      id: pdf-info
+    centerElement: true
+- assertVisible:
+    id: pdf-info
+    text: "PDF 2 p · \\d+ KB · .*"
+- scrollUntilVisible:
+    element:
+      id: attach-0-label
+    centerElement: true
+- assertVisible: "Printed in the PDF; it stays with the issued document."
+- assertNotVisible:
+    id: attach-0-remove
+- assertVisible:
+    id: attach-1-remove

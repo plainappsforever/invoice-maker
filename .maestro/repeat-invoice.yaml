@@ -1,0 +1,59 @@
+appId: ${APP_ID}
+name: Repeat invoice - recent client + 2 catalog items, issued and in the share sheet in 9 taps (A6)
+tags:
+  - core
+---
+# SPEC §7 flow 2 / A6: from the Documents list to the issued invoice in the share sheet. Taps counted by the script
+# below (limit 12). Business details, one client and three items are seeded.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: repeat
+- evalScript: ${output.taps = 0}
+- tapOn:
+    id: new-document
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: client-row
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: pick-client-1
+- evalScript: ${output.taps = output.taps + 1}
+- scrollUntilVisible:
+    element:
+      id: add-item
+    centerElement: true
+- tapOn:
+    id: add-item
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: pick-item-1
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: pick-item-2
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: picker-done
+- evalScript: ${output.taps = output.taps + 1}
+- assertVisible:
+    id: totals-gross
+    text: €242.76
+- tapOn:
+    id: issue-button
+- evalScript: ${output.taps = output.taps + 1}
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0001
+- tapOn:
+    id: action-share
+- evalScript: ${output.taps = output.taps + 1}
+- extendedWaitUntil:
+    visible: "RE-20\\d\\d-0001 M.{1,2}ller GmbH(\\.pdf)?" # iOS shows the name decomposed (u + ¨)
+    timeout: 30000
+- evalScript: "${console.log('A6 repeat invoice taps: ' + output.taps)}"
+- assertTrue: ${output.taps <= 12}
+- runFlow: subflows/dismiss-share.yaml

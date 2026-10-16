@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+name: Release - cold start to Home, five times
+tags:
+  - release
+---
+# Timing only (A6: "cold start to Home < 2 s"). Each round kills the app, launches it and waits for the Home button;
+# read the durations of the launchApp + extendedWaitUntil steps from the commands.json of the run (see V1_LOG P7).
+- repeat:
+    times: 5
+    commands:
+      - stopApp
+      - launchApp:
+          stopApp: true
+      - extendedWaitUntil:
+          visible:
+            id: new-document
+          timeout: 20000

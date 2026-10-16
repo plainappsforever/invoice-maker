@@ -1,0 +1,95 @@
+appId: ${APP_ID}
+name: Release - part payment, the rest, payment receipt without VAT, then Storno of the invoice
+tags:
+  - release
+---
+# Run after release/repeat-invoice (the "Mueller GmbH" invoice, 178.50 EUR, is issued and open).
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    text: ".*RE-20.*Mueller.*"
+- assertVisible:
+    id: doc-balance
+    text: "Balance due: €178\\.50"
+- scrollUntilVisible:
+    element:
+      id: action-record-payment
+    centerElement: true
+- tapOn:
+    id: action-record-payment
+- tapOn:
+    id: payment-amount
+- eraseText: 20
+- inputText: "50.00"
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: payment-save
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Partially paid
+- assertVisible:
+    id: doc-balance
+    text: "Balance due: €128\\.50"
+- scrollUntilVisible:
+    element:
+      id: action-record-payment
+    centerElement: true
+- tapOn:
+    id: action-record-payment
+- assertVisible:
+    id: payment-amount
+    text: "128\\.50"
+- tapOn:
+    id: payment-save
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Paid
+- scrollUntilVisible:
+    element:
+      id: action-receipt-all
+    centerElement: true
+- tapOn:
+    id: action-receipt-all
+- assertVisible:
+    id: editor-screen
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: doc-number
+    text: QU-20\d\d-\d{4}
+- runFlow: ../subflows/go-back.yaml
+- scrollUntilVisible:
+    element:
+      id: action-cancel
+    centerElement: true
+- tapOn:
+    id: action-cancel
+- tapOn: "Cancel invoice"
+- tapOn: "Create corrected copy"
+- assertVisible:
+    id: editor-screen
+- runFlow: ../subflows/go-back.yaml
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Cancelled
+- runFlow: ../subflows/go-back.yaml
+- assertVisible: ".*-€178\\.50.*"

@@ -1,0 +1,41 @@
+appId: ${APP_ID}
+name: Client detail - outstanding amount and the client's documents
+tags:
+  - p6
+---
+# V1_LOG P4 L11 row "Client detail with outstanding amount and its documents": seed = one issued invoice (€1,330.29).
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: tab-clients
+- tapOn:
+    id: client-row-1
+- assertVisible:
+    id: client-outstanding-EUR
+    text: "€1,330\\.29"
+- scrollUntilVisible:
+    element:
+      id: client-doc-1
+    centerElement: true
+- tapOn:
+    id: client-doc-1
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0001
+- tapOn:
+    id: action-paid-full
+- runFlow: subflows/go-back.yaml
+- scrollUntilVisible:
+    element:
+      id: client-outstanding
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: client-outstanding
+    text: ".*Nothing outstanding.*"

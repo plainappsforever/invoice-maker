@@ -1,0 +1,55 @@
+appId: ${APP_ID}
+name: E-mail - mail app opens with the PDF; without a mail account (iOS Simulator) the text is copied and the share sheet opens
+tags:
+  - p5
+---
+# D25 / SPEC §10. iOS Simulator: no Mail account (canSendMail false) → fallback: text on the clipboard + share sheet.
+# Android emulator: Gmail is installed (not signed in) → the mail intent opens it; Android reports every composer
+# result as "sent", so nothing is marked automatically there.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: doc-row-1
+- tapOn:
+    id: action-email
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible: "RE-20\\d\\d-0001 M.{1,2}ller GmbH(\\.pdf)?" # iOS shows the name decomposed (u + ¨)
+          timeout: 30000
+      - runFlow: subflows/dismiss-share.yaml
+      - scrollUntilVisible:
+          element:
+            id: text-copied
+          centerElement: true
+      - assertVisible: Text copied
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible: "(Welcome to Gmail|Compose|Compose email|Add an email address)"
+          timeout: 30000
+      - back
+      # Gmail's first-run screen runs in its own task: back lands on the launcher, so bring the app forward again.
+      - launchApp:
+          stopApp: false
+      - extendedWaitUntil:
+          visible:
+            id: document-screen
+          timeout: 15000
+# Nothing is marked as sent by itself here.
+- scrollUntilVisible:
+    element:
+      id: mark-sent-bar
+    centerElement: true
+- assertVisible:
+    id: mark-sent-bar

@@ -1,0 +1,86 @@
+appId: ${APP_ID}
+name: Reminders - asked once in context, an overdue invoice schedules one notification, it appears at the reminder time and opens the invoice (A10)
+tags:
+  - p6
+---
+# SPEC A10. The `overdue` fixture is Example A, due YESTERDAY: its overdue reminder (due + 1 day) falls on today. The
+# debug button sets the reminder time to now + 2 min. The question about notifications appears once, after the
+# first invoice with a due date is opened/issued; the system permission prompt follows.
+- runFlow:
+    file: subflows/reset-ask.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: overdue
+- tapOn:
+    id: doc-row-1
+# The question appears only while the permission was never decided. The iOS Simulator cannot reset it (simctl has no
+# notifications service), so there it appears on the first run of a fresh simulator only; Android resets it at launch.
+- runFlow:
+    when:
+      visible: "Remind you about unpaid invoices?"
+    commands:
+      - tapOn: "Continue"
+      - extendedWaitUntil:
+          visible: "Allow"
+          timeout: 15000
+      - tapOn: "Allow"
+- assertVisible:
+    id: doc-status
+    text: Overdue
+# The question is not asked again.
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: doc-row-1
+- assertNotVisible: "Remind you about unpaid invoices?"
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-reminders
+- assertVisible:
+    id: reminder-permission
+    text: ".*Allowed.*"
+- tapOn:
+    id: debug-reminder-now2
+- assertVisible:
+    id: reminder-scheduled
+    text: ".*1 \\(should be 1\\).*"
+# The notification fires at the reminder time (now + 1..2 min). Maestro cannot see a banner (it belongs to the system UI),
+# so after the wait the notification is read from the notification centre / shade and tapped: it opens the invoice.
+- runFlow:
+    file: subflows/wait.yaml
+    env:
+      MS: "135000"
+# Android: read the notification from the shade and tap it: it opens the invoice (response → invoice).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - swipe:
+          start: 50%,0%
+          end: 50%,70%
+          duration: 600
+      - extendedWaitUntil:
+          visible: ".*RE-20\\d\\d-0001 is overd.*"
+          timeout: 30000
+      - tapOn: ".*RE-20\\d\\d-0001 is overd.*"
+      - assertVisible:
+          id: doc-number
+          text: RE-20\d\d-0001
+# iOS: Maestro cannot read the system banner. The delivery is proven by the OS pending list: the reminder is gone from
+# it after it fired (the screenshot of the notification centre is in the P6 log).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - launchApp
+      - tapOn:
+          id: tab-settings
+      - tapOn:
+          id: settings-reminders
+      - assertVisible:
+          id: reminder-scheduled
+          text: ".*0 \\(should be 0\\).*"

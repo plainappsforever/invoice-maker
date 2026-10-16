@@ -1,0 +1,18 @@
+appId: ${APP_ID}
+---
+# Closes the system share sheet without choosing an app: Android back; iOS a tap above the sheet. Then waits until
+# the sheet (which shows the file name) is gone.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: 50%,25%
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- extendedWaitUntil:
+    notVisible: "RE-20\\d\\d-0001 M.{1,2}ller GmbH(\\.pdf)?"
+    timeout: 10000

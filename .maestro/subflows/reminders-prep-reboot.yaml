@@ -1,0 +1,21 @@
+appId: ${APP_ID}
+---
+# Manual device check (not part of the suite): an overdue invoice with its reminder 5 minutes ahead, then the phone is
+# restarted from outside (adb reboot) WITHOUT opening the app again; the notification must still appear (V1_LOG P6).
+- runFlow:
+    file: reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: seed.yaml
+    env:
+      FIXTURE: overdue
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-reminders
+- tapOn:
+    id: debug-reminder-now5
+- assertVisible:
+    id: reminder-scheduled
+    text: ".*1 \\(should be 1\\).*"

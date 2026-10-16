@@ -1,0 +1,43 @@
+appId: ${APP_ID}
+name: Print - the system print dialog opens with the PDF and can be dismissed
+tags:
+  - p5
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: doc-row-1
+- tapOn:
+    id: action-print
+# iOS: the AirPrint sheet with paper A4 and one page; Android: the print service's preview.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible: Page 1 of 1
+          timeout: 30000
+      - assertVisible: A4
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible: Select a printer
+          timeout: 30000
+      - assertVisible: 1/1
+- runFlow: subflows/dismiss-print.yaml
+- extendedWaitUntil:
+    visible:
+      id: document-screen
+    timeout: 15000
+# Cancelling the dialog is not an error (no alert).
+- assertNotVisible: ".*did not complete.*"
+- assertVisible:
+    id: action-print

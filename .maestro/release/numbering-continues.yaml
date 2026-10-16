@@ -1,0 +1,81 @@
+appId: ${APP_ID}
+name: Release - after Delete all the next invoice does not get RE-...-0001 again (review 4)
+tags:
+  - release
+---
+# Run LAST, after release/backup-delete. Business details are typed again, one line, Issue.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-business
+- tapOn:
+    id: business-name
+- eraseText: 60
+- inputText: Muster Design
+- tapOn:
+    id: business-street
+- eraseText: 60
+- inputText: Musterstrasse 1
+- tapOn:
+    id: business-postalCode
+- eraseText: 20
+- inputText: "10115"
+- tapOn:
+    id: business-city
+- eraseText: 60
+- inputText: Berlin
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: business-taxNumber
+    centerElement: true
+- tapOn:
+    id: business-taxNumber
+- eraseText: 40
+- inputText: 12/345/67890
+- runFlow: ../subflows/hide-keyboard.yaml
+- runFlow:
+    file: ../subflows/wait.yaml
+    env:
+      MS: "900"
+- runFlow: ../subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- tapOn:
+    id: new-document
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Work
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: line-price
+- inputText: "100"
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- tapOn:
+    id: issue-button
+- extendedWaitUntil:
+    visible:
+      id: doc-number
+      text: RE-20\d\d-\d{4}
+    timeout: 30000
+- assertNotVisible:
+    id: doc-number
+    text: RE-20\d\d-0001

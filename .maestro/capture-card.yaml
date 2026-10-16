@@ -1,0 +1,79 @@
+appId: ${APP_ID}
+name: Business card - on-device text recognition fills a new client (name, contact, address, e-mail, phone, VAT id); delivery address saved
+tags:
+  - v15p1
+---
+# V1.5 P1 (N1). The Simulator/emulator has no camera and Maestro cannot drive the system pickers, so the dev link
+# `client/new?scanFixture=card` runs the REAL recognition (Vision / bundled ML Kit) on a bundled card photo
+# (assets/fixtures/card-de.jpg) and the real parser. A paper card under a real camera is a real-phone check.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- openLink: invoicemaker-dev://client/new?scanFixture=card
+- tapOn:
+    text: Open
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: client-scan-result
+      text: ".*fields filled.*"
+    timeout: 60000
+- assertVisible:
+    id: client-scan-text
+    text: "(?s).*Recognised text.*Lindenstra.*"
+- scrollUntilVisible:
+    element:
+      id: client-name
+    centerElement: true
+- assertVisible:
+    id: client-name
+    text: "M.{1,2}ller Haustechnik GmbH"
+- assertVisible:
+    id: client-contact
+    text: "Thomas M.{1,2}ller"
+- scrollUntilVisible:
+    element:
+      id: client-city
+    centerElement: true
+- assertVisible:
+    id: client-street
+    text: "Lindenstra(ß|ss)e 12"
+- assertVisible:
+    id: client-postal
+    text: "80331"
+- assertVisible:
+    id: client-city
+    text: "M.{1,2}nchen"
+- scrollUntilVisible:
+    element:
+      id: client-ship-street
+    centerElement: true
+- tapOn:
+    id: client-ship-street
+- inputText: Lagerweg 3
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: client-phone
+    centerElement: true
+- assertVisible:
+    id: client-email
+    text: t.mueller@mueller-haustechnik.de
+- assertVisible:
+    id: client-phone
+    text: "\\+49 89 123456-0"
+- scrollUntilVisible:
+    element:
+      id: client-vatid
+    centerElement: true
+- assertVisible:
+    id: client-vatid
+    text: DE812345678
+- scrollUntilVisible:
+    element:
+      id: client-save
+    centerElement: true
+- tapOn:
+    id: client-save
+- assertVisible: "(?s).*M.{1,2}ller Haustechnik GmbH.*"

@@ -1,0 +1,140 @@
+appId: ${APP_ID}
+name: Examples A and B on screen - 1.330,29 and 75,97 (A1), German formats
+tags:
+  - core
+---
+# SPEC §5: Example A (seeded draft: 4 lines, line discounts, 5 % document discount) and Example B typed in the editor
+# (gross prices, 3 lines, fixed discount). German UI: amounts read 1.330,29 €.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: de
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: examples
+# --- Example A ---
+- tapOn:
+    id: doc-row-1
+- assertVisible:
+    id: totals-net
+    text: 1\.122,66.*
+- assertVisible:
+    id: totals-vat-1900
+    text: 204,32.*
+- assertVisible:
+    id: totals-vat-700
+    text: 3,31.*
+- assertVisible:
+    id: totals-gross
+    text: 1\.330,29.*
+- runFlow: subflows/go-back.yaml
+# --- Example B (seeded draft: gross mode) ---
+- tapOn:
+    id: doc-row-2
+- assertVisible:
+    id: totals-net
+    text: 65,61.*
+- assertVisible:
+    id: totals-vat-1900
+    text: 9,13.*
+- assertVisible:
+    id: totals-vat-700
+    text: 1,23.*
+- assertVisible:
+    id: totals-gross
+    text: 75,97.*
+- runFlow: subflows/go-back.yaml
+# --- Example B typed by hand in a new invoice ---
+- tapOn:
+    id: new-document
+- scrollUntilVisible:
+    element:
+      id: gross-switch
+    centerElement: true
+- tapOn:
+    id: gross-switch
+- tapOn:
+    id: discount-amount
+- scrollUntilVisible:
+    element:
+      id: discount-value
+    centerElement: true
+- tapOn:
+    id: discount-value
+- inputText: "5"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: add-line
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Haarschnitt
+- tapOn:
+    id: line-price
+- inputText: "35"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Pflegeprodukt
+- tapOn:
+    id: line-qty
+- eraseText: 3
+- inputText: "2"
+- tapOn:
+    id: line-price
+- inputText: "12.99"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Buch
+- tapOn:
+    id: line-price
+- inputText: "19.99"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-rate-700
+    centerElement: true
+- tapOn:
+    id: line-rate-700
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- assertVisible:
+    id: totals-gross
+    text: 75,97.*
+- assertVisible:
+    id: totals-vat-700
+    text: 1,23.*

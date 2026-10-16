@@ -1,0 +1,13 @@
+appId: ${APP_ID}
+---
+# Closes the system print dialog without printing: iOS its Close button; Android back.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: Close
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

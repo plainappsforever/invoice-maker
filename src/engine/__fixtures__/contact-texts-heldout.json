@@ -1,0 +1,695 @@
+{
+ "about": "Held-out set for src/engine/contact-parse.ts, written AFTER the parser was frozen (commit of the first set), by the same agent: not blind (WORKFLOW L27 rule 4), but never used to design a rule before its first measurement. First measurement is recorded in docs/V1_LOG.md (V1.5 P1). Same rules as contact-texts.json: a field not listed must stay empty. After the first measurement (kind 18, name 17, contact 18, street 27, postcode 27, city 27, country 27, e-mail 30, phone 29, VAT 28 of 30 = 248/300) the parser was fixed generally and h-03's expectation was corrected in the parser's favour (a Swiss UID with MWST is the client's VAT number); from then on this set is NOT held out any more.",
+ "cases": [
+  {
+   "id": "h-01",
+   "source": "card",
+   "lines": [
+    "Gunnar Lindqvist",
+    "Tontechnik & Verleih",
+    "Hafenstraße 9b",
+    "D-24103 Kiel",
+    "Telefon +49 (0)431 88 77 66",
+    "gunnar@lindqvist-ton.de"
+   ],
+   "expect": {
+    "kind": "person",
+    "name": "Gunnar Lindqvist",
+    "street": "Hafenstraße 9b",
+    "postalCode": "24103",
+    "city": "Kiel",
+    "countryCode": "DE",
+    "email": "gunnar@lindqvist-ton.de",
+    "phone": "+49 (0)431 88 77 66"
+   }
+  },
+  {
+   "id": "h-02",
+   "source": "card",
+   "lines": [
+    "studio fünf",
+    "Gestaltung & Kommunikation",
+    "Ines Vogel",
+    "Leipziger Str. 55, 60487 Frankfurt",
+    "0049 69 7070 7070",
+    "ines@studiofuenf.de"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "studio fünf",
+    "contact": "Ines Vogel",
+    "street": "Leipziger Str. 55",
+    "postalCode": "60487",
+    "city": "Frankfurt",
+    "countryCode": "DE",
+    "email": "ines@studiofuenf.de",
+    "phone": "0049 69 7070 7070"
+   }
+  },
+  {
+   "id": "h-03",
+   "source": "card",
+   "lines": [
+    "Bernese Watch Repair GmbH",
+    "Urs Steiner",
+    "Marktgasse 21",
+    "CH-3011 Bern",
+    "T +41 31 311 22 33",
+    "urs.steiner@bwr.ch",
+    "CHE-123.456.789 MWST"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Bernese Watch Repair GmbH",
+    "contact": "Urs Steiner",
+    "street": "Marktgasse 21",
+    "postalCode": "3011",
+    "city": "Bern",
+    "countryCode": "CH",
+    "email": "urs.steiner@bwr.ch",
+    "phone": "+41 31 311 22 33",
+    "vatId": "CHE123456789MWST"
+   }
+  },
+  {
+   "id": "h-04",
+   "source": "card",
+   "lines": [
+    "Ing. Wolfgang Pichler, BSc",
+    "Pichler Haustechnik e.U.",
+    "Hauptplatz 3",
+    "8010 Graz",
+    "Österreich",
+    "+43 316 12 34 56",
+    "office@pichler-haustechnik.at"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Pichler Haustechnik e.U.",
+    "contact": "Wolfgang Pichler",
+    "street": "Hauptplatz 3",
+    "postalCode": "8010",
+    "city": "Graz",
+    "countryCode": "AT",
+    "email": "office@pichler-haustechnik.at",
+    "phone": "+43 316 12 34 56"
+   }
+  },
+  {
+   "id": "h-05",
+   "source": "card",
+   "lines": [
+    "Construcciones Ruiz S.L.",
+    "Javier Ruiz",
+    "Calle Mayor 14",
+    "28013 Madrid",
+    "España",
+    "+34 91 123 45 67",
+    "javier@construccionesruiz.es",
+    "CIF ESB12345678"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Construcciones Ruiz S.L.",
+    "contact": "Javier Ruiz",
+    "street": "Calle Mayor 14",
+    "postalCode": "28013",
+    "city": "Madrid",
+    "countryCode": "ES",
+    "email": "javier@construccionesruiz.es",
+    "phone": "+34 91 123 45 67",
+    "vatId": "ESB12345678"
+   }
+  },
+  {
+   "id": "h-06",
+   "source": "card",
+   "lines": [
+    "Acme Widgets Inc.",
+    "Robert Chen, VP Sales",
+    "500 Lake Shore Drive",
+    "Chicago, IL 60611",
+    "Office (312) 555-0190",
+    "Cell (312) 555-0191",
+    "rchen@acmewidgets.com"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Acme Widgets Inc.",
+    "contact": "Robert Chen",
+    "street": "500 Lake Shore Drive",
+    "postalCode": "60611",
+    "city": "Chicago, IL",
+    "countryCode": "US",
+    "email": "rchen@acmewidgets.com",
+    "phone": "(312) 555-0190"
+   }
+  },
+  {
+   "id": "h-07",
+   "source": "card",
+   "lines": [
+    "Physio am Dom",
+    "Praxis für Physiotherapie",
+    "Katharina Weiß",
+    "Domhof 2",
+    "50667 Köln",
+    "Tel. 0221 / 13 13 13",
+    "Fax 0221 / 13 13 14",
+    "termine@physio-am-dom.de"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Physio am Dom",
+    "contact": "Katharina Weiß",
+    "street": "Domhof 2",
+    "postalCode": "50667",
+    "city": "Köln",
+    "countryCode": "DE",
+    "email": "termine@physio-am-dom.de",
+    "phone": "0221 / 13 13 13"
+   }
+  },
+  {
+   "id": "h-08",
+   "source": "card",
+   "lines": [
+    "Daniela Roth",
+    "Hebamme",
+    "Mobil 0172 / 44 55 66 7",
+    "hebamme.roth@gmx.net",
+    "Lange Straße 3 · 49074 Osnabrück"
+   ],
+   "expect": {
+    "kind": "person",
+    "name": "Daniela Roth",
+    "street": "Lange Straße 3",
+    "postalCode": "49074",
+    "city": "Osnabrück",
+    "countryCode": "DE",
+    "email": "hebamme.roth@gmx.net",
+    "phone": "0172 / 44 55 66 7"
+   }
+  },
+  {
+   "id": "h-09",
+   "source": "card",
+   "lines": [
+    "Schlüsseldienst Express",
+    "24h Notdienst",
+    "0800 123 45 67",
+    "Kurfürstendamm 200",
+    "10719 Berlin"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Schlüsseldienst Express",
+    "street": "Kurfürstendamm 200",
+    "postalCode": "10719",
+    "city": "Berlin",
+    "countryCode": "DE",
+    "phone": "0800 123 45 67"
+   }
+  },
+  {
+   "id": "h-10",
+   "source": "card",
+   "lines": [
+    "MOSER",
+    "Steuerberatungsgesellschaft mbH",
+    "Dipl.-Kfm. Heinrich Moser",
+    "Steuerberater",
+    "Promenadeplatz 8",
+    "80333 München",
+    "Telefon 089 / 29 29 29-0",
+    "h.moser@moser-stb.de"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Steuerberatungsgesellschaft mbH",
+    "contact": "Heinrich Moser",
+    "street": "Promenadeplatz 8",
+    "postalCode": "80333",
+    "city": "München",
+    "countryCode": "DE",
+    "email": "h.moser@moser-stb.de",
+    "phone": "089 / 29 29 29-0"
+   }
+  },
+  {
+   "id": "h-11",
+   "source": "card",
+   "lines": [
+    "E-Mai1: kontakt@friseur-schnittpunkt.de",
+    "Friseur Schnittpunkt",
+    "Bergmannstraße 101",
+    "10961 Berlin",
+    "Tel: 030 6 91 91 91"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Friseur Schnittpunkt",
+    "street": "Bergmannstraße 101",
+    "postalCode": "10961",
+    "city": "Berlin",
+    "countryCode": "DE",
+    "email": "kontakt@friseur-schnittpunkt.de",
+    "phone": "030 6 91 91 91"
+   }
+  },
+  {
+   "id": "h-12",
+   "source": "card",
+   "lines": [
+    "Jürgen Köhler",
+    "Sachverständiger für Kfz-Schäden",
+    "Postfach 21 03",
+    "32756 Detmold",
+    "Tel. 05231 / 30 30 30",
+    "info@sv-koehler.de"
+   ],
+   "expect": {
+    "kind": "person",
+    "name": "Jürgen Köhler",
+    "street": "Postfach 21 03",
+    "postalCode": "32756",
+    "city": "Detmold",
+    "countryCode": "DE",
+    "email": "info@sv-koehler.de",
+    "phone": "05231 / 30 30 30"
+   }
+  },
+  {
+   "id": "h-13",
+   "source": "card",
+   "lines": [
+    "Brouwerij De Molen BV",
+    "Menno Olivier",
+    "Overtocht 43",
+    "2411 BT Bodegraven",
+    "+31 172 61 08 48",
+    "menno@brouwerijdemolen.nl"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Brouwerij De Molen BV",
+    "contact": "Menno Olivier",
+    "street": "Overtocht 43",
+    "postalCode": "2411 BT",
+    "city": "Bodegraven",
+    "countryCode": "NL",
+    "email": "menno@brouwerijdemolen.nl",
+    "phone": "+31 172 61 08 48"
+   }
+  },
+  {
+   "id": "h-14",
+   "source": "card",
+   "lines": [
+    "Feinkost Esposito",
+    "Salvatore Esposito",
+    "Viktualienmarkt Stand 12",
+    "80331 München",
+    "salvatore@feinkost-esposito.de"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Feinkost Esposito",
+    "contact": "Salvatore Esposito",
+    "postalCode": "80331",
+    "city": "München",
+    "countryCode": "DE",
+    "email": "salvatore@feinkost-esposito.de",
+    "street": "Viktualienmarkt Stand 12"
+   }
+  },
+  {
+   "id": "h-15",
+   "source": "card",
+   "lines": [
+    "Clara Winter",
+    "Lektorat · Korrektorat",
+    "clara.winter@lektorat-winter.de",
+    "www.lektorat-winter.de",
+    "USt-IdNr. DE 301 234 567"
+   ],
+   "expect": {
+    "kind": "person",
+    "name": "Clara Winter",
+    "email": "clara.winter@lektorat-winter.de",
+    "vatId": "DE301234567"
+   }
+  },
+  {
+   "id": "h-16",
+   "source": "letterhead",
+   "own": {
+    "name": "Lena Muster Grafik",
+    "street": "Am Anger 7",
+    "city": "Jena",
+    "email": ""
+   },
+   "lines": [
+    "Autohaus Krüger GmbH · Erfurter Str. 120 · 07743 Jena",
+    "Lena Muster Grafik",
+    "Am Anger 7",
+    "07745 Jena",
+    "Ihr Kontakt: Dirk Stein",
+    "Telefon 03641 / 44 00-27",
+    "d.stein@autohaus-krueger.de",
+    "Jena, 10.10.2026",
+    "Autohaus Krüger GmbH | Geschäftsführer: Bernd Krüger | AG Jena HRB 501234 | USt-IdNr. DE 156 789 012"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Autohaus Krüger GmbH",
+    "contact": "Dirk Stein",
+    "street": "Erfurter Str. 120",
+    "postalCode": "07743",
+    "city": "Jena",
+    "countryCode": "DE",
+    "email": "d.stein@autohaus-krueger.de",
+    "phone": "03641 / 44 00-27",
+    "vatId": "DE156789012"
+   }
+  },
+  {
+   "id": "h-17",
+   "source": "letterhead",
+   "lines": [
+    "DRUCKEREI",
+    "Gutenberg Offset",
+    "Gutenberg Offset GmbH & Co. KG",
+    "Am Güterbahnhof 6",
+    "59065 Hamm",
+    "Telefon 02381 / 9 77 00",
+    "auftrag@gutenberg-offset.de",
+    "Kommanditgesellschaft, Sitz Hamm, AG Hamm HRA 2345"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Gutenberg Offset GmbH & Co. KG",
+    "street": "Am Güterbahnhof 6",
+    "postalCode": "59065",
+    "city": "Hamm",
+    "countryCode": "DE",
+    "email": "auftrag@gutenberg-offset.de",
+    "phone": "02381 / 9 77 00"
+   }
+  },
+  {
+   "id": "h-18",
+   "source": "letterhead",
+   "lines": [
+    "Evangelische Kirchengemeinde St. Petri",
+    "Gemeindebüro",
+    "Kirchplatz 1",
+    "23552 Lübeck",
+    "Telefon 0451 / 39 77 30",
+    "gemeindebuero@st-petri-luebeck.de",
+    "Pastorin Johanna Feld"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Evangelische Kirchengemeinde St. Petri",
+    "street": "Kirchplatz 1",
+    "postalCode": "23552",
+    "city": "Lübeck",
+    "countryCode": "DE",
+    "email": "gemeindebuero@st-petri-luebeck.de",
+    "phone": "0451 / 39 77 30"
+   }
+  },
+  {
+   "id": "h-19",
+   "source": "letterhead",
+   "own": {
+    "name": "Example Ltd",
+    "street": "1 High Street",
+    "city": "York",
+    "email": ""
+   },
+   "lines": [
+    "Pennine Plumbing Ltd",
+    "Example Ltd",
+    "1 High Street",
+    "York YO1 7HU",
+    "Invoice enquiries: 01904 555 111",
+    "accounts@pennineplumbing.co.uk",
+    "Pennine Plumbing Ltd, 44 Mill Lane, Leeds LS1 4AB",
+    "VAT No. 345 6789 01"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Pennine Plumbing Ltd",
+    "street": "44 Mill Lane",
+    "postalCode": "LS1 4AB",
+    "city": "Leeds",
+    "countryCode": "GB",
+    "email": "accounts@pennineplumbing.co.uk",
+    "vatId": "GB345678901",
+    "phone": "01904 555 111"
+   }
+  },
+  {
+   "id": "h-20",
+   "source": "letterhead",
+   "lines": [
+    "Dr. rer. nat. Petra Albers",
+    "Umweltgutachten",
+    "Wiesenweg 12",
+    "49377 Vechta",
+    "Tel 04441 / 12 12 12",
+    "albers@umweltgutachten-albers.de",
+    "St.-Nr. 66/123/45678 · USt-IdNr. DE 267 890 123"
+   ],
+   "expect": {
+    "kind": "person",
+    "name": "Dr. rer. nat. Petra Albers",
+    "street": "Wiesenweg 12",
+    "postalCode": "49377",
+    "city": "Vechta",
+    "countryCode": "DE",
+    "email": "albers@umweltgutachten-albers.de",
+    "phone": "04441 / 12 12 12",
+    "vatId": "DE267890123"
+   }
+  },
+  {
+   "id": "h-21",
+   "source": "letterhead",
+   "lines": [
+    "Getränke Lux",
+    "Inh. Familie Lux",
+    "Saarbrücker Straße 4",
+    "54290 Trier",
+    "Bestellung: 0651 / 7 18 18",
+    "bestellung@getraenke-lux.de"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Getränke Lux",
+    "street": "Saarbrücker Straße 4",
+    "postalCode": "54290",
+    "city": "Trier",
+    "countryCode": "DE",
+    "email": "bestellung@getraenke-lux.de",
+    "phone": "0651 / 7 18 18"
+   }
+  },
+  {
+   "id": "h-22",
+   "source": "letterhead",
+   "lines": [
+    "Fondation Lumière",
+    "Rue du Rhône 50",
+    "1204 Genève",
+    "Suisse",
+    "+41 22 700 11 22",
+    "info@fondation-lumiere.ch"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Fondation Lumière",
+    "street": "Rue du Rhône 50",
+    "postalCode": "1204",
+    "city": "Genève",
+    "countryCode": "CH",
+    "email": "info@fondation-lumiere.ch",
+    "phone": "+41 22 700 11 22"
+   }
+  },
+  {
+   "id": "h-23",
+   "source": "letterhead",
+   "lines": [
+    "Hausarztpraxis",
+    "Dr. med. Kemal Aydin",
+    "Dr. med. Sophie Lindner",
+    "Bahnhofsplatz 1",
+    "26122 Oldenburg",
+    "Tel. 0441 / 2 50 50",
+    "Sprechzeiten Mo-Fr 8-12 Uhr"
+   ],
+   "expect": {
+    "kind": "person",
+    "name": "Dr. med. Kemal Aydin",
+    "street": "Bahnhofsplatz 1",
+    "postalCode": "26122",
+    "city": "Oldenburg",
+    "countryCode": "DE",
+    "phone": "0441 / 2 50 50"
+   }
+  },
+  {
+   "id": "h-24",
+   "source": "signature",
+   "lines": [
+    "Liebe Grüße",
+    "Nina",
+    "",
+    "Nina Hoffmann",
+    "Social Media Managerin",
+    "hellohoffmann GmbH",
+    "Ehrenfeldgürtel 76 · 50823 Köln",
+    "+49 221 999 888 0",
+    "nina@hellohoffmann.de",
+    "hellohoffmann.de | Instagram | LinkedIn"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "hellohoffmann GmbH",
+    "contact": "Nina Hoffmann",
+    "street": "Ehrenfeldgürtel 76",
+    "postalCode": "50823",
+    "city": "Köln",
+    "countryCode": "DE",
+    "email": "nina@hellohoffmann.de",
+    "phone": "+49 221 999 888 0"
+   }
+  },
+  {
+   "id": "h-25",
+   "source": "signature",
+   "lines": [
+    "Cheers,",
+    "Liam O'Brien",
+    "Director | O'Brien Joinery Ltd",
+    "Unit 3 Riverside Business Park, Galway H91 X2Y4",
+    "Ireland",
+    "+353 91 123 456",
+    "liam@obrienjoinery.ie"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "O'Brien Joinery Ltd",
+    "contact": "Liam O'Brien",
+    "countryCode": "IE",
+    "email": "liam@obrienjoinery.ie",
+    "phone": "+353 91 123 456",
+    "street": "Unit 3 Riverside Business Park",
+    "postalCode": "H91 X2Y4",
+    "city": "Galway"
+   }
+  },
+  {
+   "id": "h-26",
+   "source": "signature",
+   "lines": [
+    "Mit besten Grüßen",
+    "i. A. Sandra Klein",
+    "Kundenservice",
+    "Möbelhaus Klein GmbH",
+    "Tel. 0800 / 55 66 77 (kostenfrei)",
+    "service@moebel-klein.de",
+    "Möbelhaus Klein GmbH, Industriestraße 40, 72770 Reutlingen, Amtsgericht Stuttgart HRB 123456"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Möbelhaus Klein GmbH",
+    "contact": "Sandra Klein",
+    "street": "Industriestraße 40",
+    "postalCode": "72770",
+    "city": "Reutlingen",
+    "countryCode": "DE",
+    "email": "service@moebel-klein.de",
+    "phone": "0800 / 55 66 77"
+   }
+  },
+  {
+   "id": "h-27",
+   "source": "signature",
+   "lines": [
+    "--",
+    "Marek Nowak",
+    "Nowak Transport Sp. z o.o.",
+    "ul. Długa 15",
+    "80-831 Gdańsk",
+    "Poland",
+    "+48 58 123 45 67",
+    "marek@nowak-transport.pl",
+    "NIP PL5841234567"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Nowak Transport Sp. z o.o.",
+    "contact": "Marek Nowak",
+    "countryCode": "PL",
+    "email": "marek@nowak-transport.pl",
+    "phone": "+48 58 123 45 67",
+    "vatId": "PL5841234567",
+    "street": "ul. Długa 15",
+    "postalCode": "80-831",
+    "city": "Gdańsk"
+   }
+  },
+  {
+   "id": "h-28",
+   "source": "signature",
+   "lines": [
+    "Gruß aus dem Allgäu",
+    "Florian",
+    "Florian Berger · Zimmerei Berger",
+    "Dorfstraße 5 · 87459 Pfronten",
+    "Mobil 0170 1112223"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Zimmerei Berger",
+    "contact": "Florian Berger",
+    "street": "Dorfstraße 5",
+    "postalCode": "87459",
+    "city": "Pfronten",
+    "countryCode": "DE",
+    "phone": "0170 1112223"
+   }
+  },
+  {
+   "id": "h-29",
+   "source": "card",
+   "lines": [
+    "Termin vergessen?",
+    "Rufen Sie uns an!",
+    "Zahnarzt Dr. Brandt",
+    "Tel. 0761 / 2 22 33"
+   ],
+   "expect": {
+    "kind": "business",
+    "name": "Zahnarzt Dr. Brandt",
+    "phone": "0761 / 2 22 33"
+   }
+  },
+  {
+   "id": "h-30",
+   "source": "card",
+   "lines": [
+    "Kassenbon",
+    "Summe 23,40",
+    "MwSt 19% 3,74",
+    "Datum 14.10.2026 12:31",
+    "Vielen Dank für Ihren Einkauf"
+   ],
+   "expect": {}
+  }
+ ]
+}

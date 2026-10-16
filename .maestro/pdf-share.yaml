@@ -1,0 +1,48 @@
+appId: ${APP_ID}
+name: PDF share - issued invoice shows page 1, Share opens the system sheet with RE-2026-0001 Müller GmbH.pdf, Mark as sent
+tags:
+  - p5
+---
+# A9 / SPEC §7 flow 1 end: Issue → Send → share sheet. The PDF is named "<number> <client>.pdf" (D66).
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: doc-row-1
+- assertVisible:
+    id: open-preview
+- assertVisible:
+    id: doc-status
+    text: Issued
+- tapOn:
+    id: action-share
+- extendedWaitUntil:
+    visible: "RE-20\\d\\d-0001 M.{1,2}ller GmbH(\\.pdf)?" # iOS shows the name decomposed (u + ¨)
+    timeout: 30000
+- runFlow: subflows/dismiss-share.yaml
+- scrollUntilVisible:
+    element:
+      id: pdf-info
+    centerElement: true
+- assertVisible:
+    id: pdf-info
+    text: "PDF 1 p · \\d+ KB · .*"
+# Closing the sheet marks nothing (D25); the bar does it in one tap.
+- assertVisible:
+    id: mark-sent-bar
+- tapOn:
+    id: mark-sent
+- assertVisible:
+    id: sent-on
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+- assertVisible:
+    id: doc-status
+    text: Sent

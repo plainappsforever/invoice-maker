@@ -1,0 +1,25 @@
+appId: ${APP_ID}
+---
+# Closes a system share sheet without choosing an app (Android back; iOS a tap above the sheet), whatever the file name.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: 50%,15%
+      - runFlow:
+          when:
+            notVisible:
+              id: data-screen
+          commands:
+            - tapOn:
+                point: 50%,12%
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- extendedWaitUntil:
+    visible:
+      id: data-screen
+    timeout: 10000

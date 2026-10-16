@@ -1,0 +1,36 @@
+appId: ${APP_ID}
+name: Release - an upgrade install keeps the data, then Delete all gives an empty app
+tags:
+  - release
+---
+# v1.1: the Release build is installed OVER the v1.0 preview build (no uninstall: the deletion rule), so this flow runs
+# FIRST: the app opens on the old database (migration 4 runs on it), then the app's own "Delete all data" empties it for
+# the flows after it (ids restart at 1; the number counters stay, D81). Assertions name no v1.0 document, so it also
+# passes on a fresh install.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-data
+- scrollUntilVisible:
+    element:
+      id: delete-all
+    centerElement: true
+- tapOn:
+    id: delete-all
+- assertVisible: ".*Numbering continues after the last number used.*"
+- tapOn: "Continue"
+- tapOn: "Delete everything"
+- assertVisible:
+    id: delete-message
+    text: All data was deleted.
+- runFlow: ../subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- assertVisible:
+    id: documents-empty

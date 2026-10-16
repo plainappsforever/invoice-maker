@@ -1,0 +1,27 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.textscan'
+version = '0.1.0'
+
+android {
+  namespace "expo.modules.textscan"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  // Same artifact and version the document-scanner plugin uses; here only to ask Play services whether the
+  // scanner module is installed before launching it (warranty-wallet D33).
+  implementation "com.google.android.gms:play-services-mlkit-document-scanner:16.0.0"
+  // Text recognition with the BUNDLED Latin model (~4 MB per ABI, pinned): part of the APK, works offline from the
+  // first use. Not `play-services-mlkit-text-recognition`, which downloads its model through Play services later.
+  implementation "com.google.mlkit:text-recognition:16.0.1"
+}

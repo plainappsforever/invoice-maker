@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSCameraUsageDescription": "Invoice Maker nutzt die Kamera, um Visitenkarten, Belege und Dokumente zu scannen. Fotos und Scans bleiben auf deinem Telefon.",
+    "NSPhotoLibraryUsageDescription": "Invoice Maker lässt dich dein Logo, Belegfotos und Produktfotos auswählen.",
+    "NSContactsUsageDescription": "Invoice Maker liest nur den Kontakt, den du auswählst, um einen Kunden auszufüllen. Nichts verlässt dein Telefon."
+  }
+}

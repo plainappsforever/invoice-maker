@@ -1,0 +1,42 @@
+appId: ${APP_ID}
+name: Release - version 1.1.0, privacy text with the phone-backup sentence, e-invoice help, licences
+tags:
+  - release
+---
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-settings
+- scrollUntilVisible:
+    element:
+      id: settings-about
+    centerElement: true
+- assertVisible:
+    id: settings-about
+    text: ".*Help, about & privacy.*"
+- tapOn:
+    id: settings-about
+- assertVisible:
+    id: about-version
+    text: ".*1\\.1\\.0.*"
+- assertVisible: "Everything is stored on this phone.*"
+- assertVisible: "The app's own code makes no network connections.*"
+- assertVisible:
+    id: about-privacy-backup
+    text: "Phone backups: .*"
+- scrollUntilVisible:
+    element:
+      id: about-einvoice
+    centerElement: true
+- assertVisible: "The PDFs this app creates are not e-invoices.*"
+- assertVisible: ".*27 Abs\\. 38 UStG.*"
+- scrollUntilVisible:
+    element:
+      id: about-licences
+    centerElement: true
+- assertVisible:
+    id: about-licences

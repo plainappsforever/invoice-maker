@@ -1,0 +1,184 @@
+{
+  "_about": "SPEC §5 worked examples A–F as engine fixtures: input + every intermediate number, all integers (cents, qty x1000, price x10000, basis points). Changing a formula must keep every number here (V1_PLAN rule 12). Fields under 'document' are used by later phases (legal notes, GiroCode, cancellation text).",
+  "examples": [
+    {
+      "id": "A",
+      "title": "Net prices, mixed rates, line + document discounts, deposit (EUR, German)",
+      "document": { "type": "invoice", "number": "RE-2026-0001", "issueDate": "2026-10-01", "language": "de", "currency": "EUR",
+        "business": { "name": "Muster Design", "iban": "DE89370400440532013000" },
+        "girocode": "BCD\n002\n1\nSCT\n\nMuster Design\nDE89370400440532013000\nEUR1030.29\n\n\nRE-2026-0001" },
+      "input": {
+        "pricesIncludeVat": false,
+        "discount": { "kind": "percent", "value": 500 },
+        "payments": [30000],
+        "lines": [
+          { "name": "Webdesign", "qtyMilli": 12500, "priceE4": 850000, "category": "S", "rateBp": 1900, "discount": { "kind": "percent", "value": 1000 } },
+          { "name": "Hosting (12 Monate)", "qtyMilli": 1000, "priceE4": 1190000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Fachbuch", "qtyMilli": 2000, "priceE4": 249000, "category": "S", "rateBp": 700, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Druck Flyer", "qtyMilli": 500000, "priceE4": 1234, "category": "S", "rateBp": 1900, "discount": { "kind": "amount", "value": 500 } }
+        ]
+      },
+      "expected": {
+        "lines": [
+          { "base": 106250, "discount": 10625, "net": 95625 },
+          { "base": 11900, "discount": 0, "net": 11900 },
+          { "base": 4980, "discount": 0, "net": 4980 },
+          { "base": 6170, "discount": 500, "net": 5670 }
+        ],
+        "groups": [
+          { "category": "S", "rateBp": 1900, "amount": 113195, "discount": 5660, "taxable": 107535, "tax": 20432, "gross": 127967 },
+          { "category": "S", "rateBp": 700, "amount": 4980, "discount": 249, "taxable": 4731, "tax": 331, "gross": 5062 }
+        ],
+        "lineTotal": 118175, "discount": 5909, "net": 112266, "tax": 20763, "gross": 133029, "paid": 30000, "balance": 103029
+      }
+    },
+    {
+      "id": "B",
+      "title": "Gross prices (B2C), mixed rates, fixed document discount",
+      "document": { "type": "invoice", "language": "de", "currency": "EUR" },
+      "input": {
+        "pricesIncludeVat": true,
+        "discount": { "kind": "amount", "value": 500 },
+        "payments": [],
+        "lines": [
+          { "name": "Haarschnitt", "qtyMilli": 1000, "priceE4": 350000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Pflegeprodukt", "qtyMilli": 2000, "priceE4": 129900, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Buch", "qtyMilli": 1000, "priceE4": 199900, "category": "S", "rateBp": 700, "discount": { "kind": "none", "value": 0 } }
+        ]
+      },
+      "expected": {
+        "lines": [
+          { "base": 3500, "discount": 0, "net": 3500 },
+          { "base": 2598, "discount": 0, "net": 2598 },
+          { "base": 1999, "discount": 0, "net": 1999 }
+        ],
+        "groups": [
+          { "category": "S", "rateBp": 1900, "amount": 6098, "discount": 377, "taxable": 4808, "tax": 913, "gross": 5721 },
+          { "category": "S", "rateBp": 700, "amount": 1999, "discount": 123, "taxable": 1753, "tax": 123, "gross": 1876 }
+        ],
+        "lineTotal": 8097, "discount": 500, "net": 6561, "tax": 1036, "gross": 7597, "paid": 0, "balance": 7597
+      }
+    },
+    {
+      "id": "C",
+      "title": "Small business (§19 UStG): no VAT, document discount 10 %",
+      "document": { "type": "invoice", "language": "de", "currency": "EUR", "vatMode": "small_business",
+        "legalNote": "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet." },
+      "input": {
+        "pricesIncludeVat": false,
+        "discount": { "kind": "percent", "value": 1000 },
+        "payments": [],
+        "lines": [
+          { "name": "Nachhilfestunde", "qtyMilli": 3000, "priceE4": 400000, "category": "E", "rateBp": 0, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Material", "qtyMilli": 1000, "priceE4": 155000, "category": "E", "rateBp": 0, "discount": { "kind": "none", "value": 0 } }
+        ]
+      },
+      "expected": {
+        "lines": [
+          { "base": 12000, "discount": 0, "net": 12000 },
+          { "base": 1550, "discount": 0, "net": 1550 }
+        ],
+        "groups": [
+          { "category": "E", "rateBp": 0, "amount": 13550, "discount": 1355, "taxable": 12195, "tax": 0, "gross": 12195 }
+        ],
+        "lineTotal": 13550, "discount": 1355, "net": 12195, "tax": 0, "gross": 12195, "paid": 0, "balance": 12195
+      }
+    },
+    {
+      "id": "D",
+      "title": "Reverse charge, EU business client (EN document)",
+      "document": { "type": "invoice", "language": "en", "currency": "EUR", "treatment": "reverse_charge",
+        "legalNote": "Reverse charge — Steuerschuldnerschaft des Leistungsempfängers" },
+      "input": {
+        "pricesIncludeVat": false,
+        "discount": { "kind": "none", "value": 0 },
+        "payments": [],
+        "lines": [
+          { "name": "Consulting", "qtyMilli": 1000, "priceE4": 20000000, "category": "AE", "rateBp": 0, "discount": { "kind": "none", "value": 0 } }
+        ]
+      },
+      "expected": {
+        "lines": [ { "base": 200000, "discount": 0, "net": 200000 } ],
+        "groups": [
+          { "category": "AE", "rateBp": 0, "amount": 200000, "discount": 0, "taxable": 200000, "tax": 0, "gross": 200000 }
+        ],
+        "lineTotal": 200000, "discount": 0, "net": 200000, "tax": 0, "gross": 200000, "paid": 0, "balance": 200000
+      }
+    },
+    {
+      "id": "E1",
+      "title": "Rounding convention (1): 3 x 0,3333 EUR at 19 %",
+      "document": { "type": "invoice", "language": "de", "currency": "EUR" },
+      "input": {
+        "pricesIncludeVat": false,
+        "discount": { "kind": "none", "value": 0 },
+        "payments": [],
+        "lines": [
+          { "name": "Kleinteil", "qtyMilli": 3000, "priceE4": 3333, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } }
+        ]
+      },
+      "expected": {
+        "lines": [ { "base": 100, "discount": 0, "net": 100 } ],
+        "groups": [
+          { "category": "S", "rateBp": 1900, "amount": 100, "discount": 0, "taxable": 100, "tax": 19, "gross": 119 }
+        ],
+        "lineTotal": 100, "discount": 0, "net": 100, "tax": 19, "gross": 119, "paid": 0, "balance": 119
+      }
+    },
+    {
+      "id": "E2",
+      "title": "Rounding convention (2): ten lines 1 x 0,10 EUR at 19 % — tax on the group total (BR-CO-17) is 0,19, per-line rounding would give 0,20",
+      "document": { "type": "invoice", "language": "de", "currency": "EUR", "perLineTaxWouldBe": 20 },
+      "input": {
+        "pricesIncludeVat": false,
+        "discount": { "kind": "none", "value": 0 },
+        "payments": [],
+        "lines": [
+          { "name": "Teil 1", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 2", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 3", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 4", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 5", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 6", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 7", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 8", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 9", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } },
+          { "name": "Teil 10", "qtyMilli": 1000, "priceE4": 1000, "category": "S", "rateBp": 1900, "discount": { "kind": "none", "value": 0 } }
+        ]
+      },
+      "expected": {
+        "lines": [
+          { "base": 10, "discount": 0, "net": 10 }, { "base": 10, "discount": 0, "net": 10 },
+          { "base": 10, "discount": 0, "net": 10 }, { "base": 10, "discount": 0, "net": 10 },
+          { "base": 10, "discount": 0, "net": 10 }, { "base": 10, "discount": 0, "net": 10 },
+          { "base": 10, "discount": 0, "net": 10 }, { "base": 10, "discount": 0, "net": 10 },
+          { "base": 10, "discount": 0, "net": 10 }, { "base": 10, "discount": 0, "net": 10 }
+        ],
+        "groups": [
+          { "category": "S", "rateBp": 1900, "amount": 100, "discount": 0, "taxable": 100, "tax": 19, "gross": 119 }
+        ],
+        "lineTotal": 100, "discount": 0, "net": 100, "tax": 19, "gross": 119, "paid": 0, "balance": 119
+      }
+    },
+    {
+      "id": "F",
+      "title": "Cancellation of Example A: every amount the exact negative",
+      "cancellationOf": "A",
+      "document": { "type": "cancellation", "language": "de", "currency": "EUR",
+        "referenceText": "Stornorechnung zu RE-2026-0001 vom 01.10.2026" },
+      "expected": {
+        "lines": [
+          { "base": -106250, "discount": -10625, "net": -95625 },
+          { "base": -11900, "discount": 0, "net": -11900 },
+          { "base": -4980, "discount": 0, "net": -4980 },
+          { "base": -6170, "discount": -500, "net": -5670 }
+        ],
+        "groups": [
+          { "category": "S", "rateBp": 1900, "amount": -113195, "discount": -5660, "taxable": -107535, "tax": -20432, "gross": -127967 },
+          { "category": "S", "rateBp": 700, "amount": -4980, "discount": -249, "taxable": -4731, "tax": -331, "gross": -5062 }
+        ],
+        "lineTotal": -118175, "discount": -5909, "net": -112266, "tax": -20763, "gross": -133029, "paid": 0, "balance": -133029
+      }
+    }
+  ]
+}

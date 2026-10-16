@@ -1,0 +1,119 @@
+appId: ${APP_ID}
+name: Payments - part payment, the rest, an overpayment; statuses, balance and Home summary match (A8); payment receipt
+tags:
+  - p6
+---
+# SPEC A8 / §7 flow 4. Example A issued = 1.330,29 €. English UI: €1,330.29.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: doc-row-1
+- assertVisible:
+    id: doc-balance
+    text: "Balance due: €1,330\\.29"
+- scrollUntilVisible:
+    element:
+      id: action-record-payment
+    centerElement: true
+- tapOn:
+    id: action-record-payment
+# Part payment: 500,00 (the amount starts as the whole balance, one tap would be "paid").
+- tapOn:
+    id: payment-amount
+- eraseText: 20
+- inputText: "500.00"
+- runFlow: subflows/hide-keyboard.yaml
+- tapOn:
+    id: payment-save
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Partially paid
+- assertVisible:
+    id: doc-balance
+    text: "Balance due: €830\\.29"
+# The rest: the amount is prefilled with the balance, so Save pays it in full.
+- scrollUntilVisible:
+    element:
+      id: action-record-payment
+    centerElement: true
+- tapOn:
+    id: action-record-payment
+- assertVisible:
+    id: payment-amount
+    text: "830\\.29"
+- tapOn:
+    id: payment-save
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Paid
+- assertVisible:
+    id: doc-balance
+    text: Paid in full
+# Overpayment: 10,00 more than the balance.
+- scrollUntilVisible:
+    element:
+      id: action-record-payment
+    centerElement: true
+- tapOn:
+    id: action-record-payment
+- tapOn:
+    id: payment-amount
+- inputText: "10.00"
+- assertVisible:
+    id: payment-overpaid
+- runFlow: subflows/hide-keyboard.yaml
+- tapOn:
+    id: payment-save
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-balance
+    text: "Paid in full · Overpaid by €10\\.00"
+- scrollUntilVisible:
+    element:
+      id: payments-total
+    centerElement: true
+- assertVisible:
+    id: payments-total
+    text: ".*€1,340\\.29.*"
+# Payment receipt for all payments: a draft receipt with the amount received; issue it.
+- scrollUntilVisible:
+    element:
+      id: action-receipt-all
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: action-receipt-all
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: doc-number
+    text: QU-20\d\d-0001
+# Back on the invoice list: Home summary matches (outstanding 0, paid this month 1.340,29).
+- runFlow: subflows/go-back.yaml
+- runFlow: subflows/go-back.yaml
+- assertVisible:
+    id: summary-paid-EUR
+    text: ".*€1,340\\.29.*"
+- assertVisible:
+    id: summary-outstanding-EUR
+    text: "€0\\.00"

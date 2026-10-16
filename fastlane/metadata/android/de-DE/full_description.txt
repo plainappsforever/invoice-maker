@@ -1,0 +1,29 @@
+Rechnung am Handy schreiben, die Angaben nach dem deutschen Umsatzsteuerrecht ergänzen und als PDF teilen. Alles bleibt auf deinem Handy. Kein Konto, kein Abo, keine Werbung und keine Begrenzung der Dokumentenzahl.
+
+Dokumente
+Rechnungen, Angebote, Quittungen und Stornorechnungen. Ein angenommenes Angebot wird zur Rechnung, jedes Dokument lässt sich duplizieren, und einen Fehler korrigierst du mit einer Stornorechnung und einer korrigierten Kopie. Eine ausgestellte Rechnung ist gesperrt, bekommt die nächste Nummer und wird nie umnummeriert; eine Nummer wird nie zweimal vergeben. Der Rechnungseditor speichert deine Änderungen beim Tippen.
+
+Bekannte Kunden, schnell
+Kunden und Artikel einmal speichern. Eine weitere Rechnung für einen gespeicherten Kunden mit zwei gespeicherten Artikeln braucht neun Tipps von der Rechnungsliste bis zum Teilen-Dialog.
+
+Zahlen
+USt pro Position (19 %, 7 %, 0 % oder eigene Sätze), Preise mit oder ohne USt, Rabatte je Position und auf das ganze Dokument (Prozent oder fester Betrag), Anzahlungen und Teilzahlungen. Die Summen werden auf den Cent berechnet, die USt je Steuersatz.
+
+Deutschland und EU
+Die Rechnung hat Felder für die Angaben, die § 14 UStG nennt: beide Anschriften, Steuernummer oder USt-IdNr., Datum, fortlaufende Nummer, Menge und Bezeichnung, Leistungsdatum, Entgelt nach Steuersätzen sowie Steuerbetrag oder Hinweis auf eine Befreiung. Vor dem Ausstellen listet eine Prüfung auf, was noch fehlt. Hinweise für Kleinunternehmer (§ 19 UStG), Reverse Charge, innergemeinschaftliche Lieferung, Ausfuhr und steuerfreie Umsätze sind auf Deutsch und Englisch vorbereitet, mit Angabe der Quelle; jeden Hinweis kannst du ändern. Dazu Quittungen, auch für Kleinbeträge bis 250 €, und das Fensterumschlag-Layout nach DIN 5008 in der Vorlage Classic. Prüfung und Hinweise sind Information, keine Steuer- oder Rechtsberatung.
+
+PDF und Versand
+Drei Layouts (Classic, Modern, Compact), A4 oder Letter, dein Logo und deine Akzentfarbe. Lange Rechnungen laufen über mehrere Seiten mit Seitenzahlen. Euro-Rechnungen mit SEPA-IBAN tragen einen GiroCode (EPC-QR-Code) mit deiner IBAN, dem Betrag und der Rechnungsnummer. Das PDF enthält keine Werbung, kein Wasserzeichen und keinen App-Link. Teile es mit einer beliebigen App, sende es aus deiner Mail-App oder drucke es.
+
+Zahlungen und Erinnerungen
+Teil- und Gesamtzahlungen erfassen, Zahlungsbelege erstellen, offene und überfällige Beträge sehen. Auf Wunsch zeigt das Handy am Tag vor der Fälligkeit und am Tag danach eine Erinnerung, höchstens eine pro Tag. Die Erinnerungen plant das Handy selbst: kein Server.
+
+Deine Daten
+Alles in einer Datei sichern und auf einem anderen Handy wiederherstellen, CSV-Dateien für die Steuerberatung exportieren oder alle Daten löschen. Sicherungs- und CSV-Dateien sind einfach lesbar, nicht verschlüsselt und enthalten Kundendaten: bewahre sie sicher auf. Die App hat keine Internet-Berechtigung; Daten verlassen dein Handy nur, wenn du selbst eine Datei, ein PDF oder eine E-Mail teilst. Wenn du die Handy-Sicherung von Google nutzt, kann sie die Daten der App enthalten.
+
+Sprachen
+Die App gibt es auf Deutsch und Englisch, sie folgt deinem Handy. Jedes Dokument kann auf Deutsch oder Englisch sein, je Kunde einstellbar.
+
+In dieser Version nicht enthalten
+- E-Rechnungen. Diese Version erstellt PDF-Rechnungen, keine XRechnung- oder ZUGFeRD-Dateien. In Deutschland gilt seit dem 1. Januar 2025 die Pflicht, E-Rechnungen empfangen zu können; das Ausstellen gegenüber anderen inländischen Unternehmen wird je nach Vorjahresumsatz ab 2027 oder 2028 zur Regel, mit Ausnahmen (FAQ des Bundesfinanzministeriums, Stand März 2026). Frag deine Steuerberatung, was für dich gilt.
+- Mahnschreiben, Kartenzahlung oder Zahlungslinks, Abgleich zwischen Handys, mehrere Firmen in einer App.

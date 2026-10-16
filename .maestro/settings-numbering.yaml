@@ -1,0 +1,88 @@
+appId: ${APP_ID}
+name: Numbering settings - next number 43, invalid pattern refused, lowering below a used number refused
+tags:
+  - core
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: repeat
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-numbering
+- assertVisible:
+    id: numbering-preview-invoice
+    text: .*RE-20\d\d-0001.*
+# a pattern without a counter is refused with a reason
+- tapOn:
+    id: numbering-pattern-invoice
+- eraseText: 30
+- inputText: RE
+- assertVisible: .*counter.*
+- tapOn:
+    id: numbering-save-invoice
+- assertNotVisible:
+    id: numbering-saved-invoice
+- tapOn:
+    id: numbering-pattern-invoice
+- eraseText: 30
+- inputText: RE-{YYYY}-{NNNN}
+- tapOn:
+    id: numbering-next-invoice
+- eraseText: 10
+- inputText: "43"
+- runFlow: subflows/hide-keyboard.yaml
+- assertVisible:
+    id: numbering-preview-invoice
+    text: .*RE-20\d\d-0043.*
+- tapOn:
+    id: numbering-save-invoice
+- assertVisible:
+    id: numbering-saved-invoice
+# the next invoice gets 0043
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- tapOn:
+    id: new-document
+- tapOn:
+    id: client-row
+- tapOn:
+    id: pick-client-1
+- scrollUntilVisible:
+    element:
+      id: add-item
+    centerElement: true
+- tapOn:
+    id: add-item
+- tapOn:
+    id: pick-item-2
+- tapOn:
+    id: picker-done
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0043
+# lowering to a number that is already used is refused
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-numbering
+- tapOn:
+    id: numbering-next-invoice
+- eraseText: 10
+- inputText: "40"
+- runFlow: subflows/hide-keyboard.yaml
+- tapOn:
+    id: numbering-save-invoice
+- assertVisible:
+    id: numbering-error-invoice
+- assertNotVisible:
+    id: numbering-saved-invoice

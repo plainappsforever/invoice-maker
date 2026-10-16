@@ -1,0 +1,76 @@
+appId: ${APP_ID}
+name: Release - an invalid typed date stops Issue; a stale draft asks for the date of supply, then issues
+tags:
+  - release
+---
+# Run after release/repeat-invoice (business details exist). Same steps as the dev flow check-dates.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: new-document
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Work
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: line-price
+- inputText: "100"
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- scrollUntilVisible:
+    element:
+      id: issue-date
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: issue-date
+- eraseText: 12
+- inputText: 10/1/2026
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: issue-button
+- assertVisible: Fix the highlighted field
+- tapOn: OK
+- tapOn:
+    id: issue-date
+- eraseText: 12
+- inputText: 2026-01-15
+- runFlow: ../subflows/hide-keyboard.yaml
+- runFlow:
+    file: ../subflows/wait.yaml
+    env:
+      MS: "1000"
+- tapOn:
+    id: issue-button
+- extendedWaitUntil:
+    visible:
+      id: check-item-service_date_stale
+    timeout: 20000
+- tapOn:
+    id: check-fix-service-keep
+- extendedWaitUntil:
+    visible:
+      id: check-item-issue_date_past
+    timeout: 20000
+- tapOn:
+    id: issue-anyway
+- extendedWaitUntil:
+    visible:
+      id: doc-number
+      text: RE-20\d\d-\d{4}
+    timeout: 30000

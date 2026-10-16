@@ -1,0 +1,169 @@
+appId: ${APP_ID}
+name: Release - set up business, client and two items by hand, then repeat invoice in 9 taps
+tags:
+  - release
+---
+# The Release build has no seed links: business details, one client and two items are typed in first (not counted),
+# then the A6 path (SPEC §7 flow 2) is counted exactly as in the dev flow. Run after zero-prompt.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-business
+- tapOn:
+    id: business-name
+- eraseText: 60
+- inputText: Muster Design
+- tapOn:
+    id: business-street
+- eraseText: 60
+- inputText: Musterstrasse 1
+- tapOn:
+    id: business-postalCode
+- eraseText: 20
+- inputText: "10115"
+- tapOn:
+    id: business-city
+- eraseText: 60
+- inputText: Berlin
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: business-taxNumber
+    centerElement: true
+- tapOn:
+    id: business-taxNumber
+- eraseText: 40
+- inputText: 12/345/67890
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: business-iban
+    centerElement: true
+- tapOn:
+    id: business-iban
+- eraseText: 40
+- inputText: DE89370400440532013000
+- runFlow: ../subflows/hide-keyboard.yaml
+- runFlow:
+    file: ../subflows/wait.yaml
+    env:
+      MS: "900"
+- runFlow: ../subflows/go-back.yaml
+- assertVisible:
+    id: settings-screen
+- tapOn:
+    id: settings-items
+- tapOn:
+    id: new-item
+- tapOn:
+    id: item-name
+- inputText: Webdesign
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: item-price
+    centerElement: true
+- tapOn:
+    id: item-price
+- inputText: "100"
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: item-save
+- assertVisible: (?s).*Webdesign.*
+- tapOn:
+    id: new-item
+- tapOn:
+    id: item-name
+- inputText: Hosting
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: item-price
+    centerElement: true
+- tapOn:
+    id: item-price
+- inputText: "50"
+- runFlow: ../subflows/hide-keyboard.yaml
+- tapOn:
+    id: item-save
+- assertVisible: (?s).*Hosting.*
+- runFlow: ../subflows/go-back.yaml
+- tapOn:
+    id: tab-clients
+- tapOn:
+    id: new-client
+- tapOn:
+    id: client-name
+- inputText: Mueller GmbH
+- runFlow: ../subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: client-save
+    centerElement: true
+- tapOn:
+    id: client-save
+- assertVisible: (?s).*Mueller GmbH.*
+- tapOn:
+    id: tab-invoices
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 30000
+# ---- counted path: Documents list -> issued invoice in the share sheet ----
+- evalScript: ${output.taps = 0}
+- tapOn:
+    id: new-document
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: client-row
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: pick-client-1
+- evalScript: ${output.taps = output.taps + 1}
+- scrollUntilVisible:
+    element:
+      id: add-item
+    centerElement: true
+- tapOn:
+    id: add-item
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: pick-item-1
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: pick-item-2
+- evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: picker-done
+- evalScript: ${output.taps = output.taps + 1}
+- assertVisible:
+    id: totals-gross
+    text: €178.50
+- tapOn:
+    id: issue-button
+- evalScript: ${output.taps = output.taps + 1}
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-\d{4}
+# Release builds ask about reminders once, in context, after the first Issue (the dev reset pre-answers it): a real tap, counted.
+- runFlow:
+    when:
+      visible: Not now
+    commands:
+      - tapOn: Not now
+      - evalScript: ${output.taps = output.taps + 1}
+- tapOn:
+    id: action-share
+- evalScript: ${output.taps = output.taps + 1}
+- extendedWaitUntil:
+    visible: "RE-20\\d\\d-\\d{4} Mueller GmbH(\\.pdf)?"
+    timeout: 30000
+- evalScript: "${console.log('A6 repeat invoice taps (Release): ' + output.taps)}"
+- assertTrue: ${output.taps <= 12}
+- runFlow: ../subflows/dismiss-share.yaml

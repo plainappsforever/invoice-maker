@@ -1,0 +1,19 @@
+appId: ${APP_ID}
+---
+# Like reset.yaml, but leaves the one in-app reminder question open (ask=1) so a flow can answer it (env UI_LANG: en | de).
+- launchApp:
+    stopApp: true
+    permissions:
+      notifications: unset # the notification permission starts as "not asked" on both platforms
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- openLink: invoicemaker-dev://debug/reset?lang=${UI_LANG}&ask=1
+- tapOn:
+    text: Open
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 30000

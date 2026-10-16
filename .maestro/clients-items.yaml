@@ -1,0 +1,69 @@
+appId: ${APP_ID}
+name: Clients and items - EU client gets a reverse-charge suggestion, an item is created and found in the picker
+tags:
+  - core
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: tab-clients
+- tapOn:
+    id: new-client
+- tapOn:
+    id: client-name
+- inputText: Acme BV
+- scrollUntilVisible:
+    element:
+      id: client-country
+    centerElement: true
+- tapOn:
+    id: client-country
+- eraseText: 2
+- inputText: NL
+- scrollUntilVisible:
+    element:
+      id: client-vatid
+    centerElement: true
+- tapOn:
+    id: client-vatid
+- inputText: NL123456789B01
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: client-treatment-suggestion
+    centerElement: true
+- assertVisible:
+    id: client-treatment-suggestion
+    text: .*reverse charge.*
+- tapOn:
+    id: client-use-suggestion
+- scrollUntilVisible:
+    element:
+      id: client-save
+    centerElement: true
+- tapOn:
+    id: client-save
+- assertVisible: (?s).*Acme BV.*
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-items
+- tapOn:
+    id: new-item
+- tapOn:
+    id: item-name
+- inputText: Beratung
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: item-price
+    centerElement: true
+- tapOn:
+    id: item-price
+- inputText: "120"
+- runFlow: subflows/hide-keyboard.yaml
+- tapOn:
+    id: item-save
+- assertVisible: (?s).*Beratung.*

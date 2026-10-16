@@ -1,0 +1,66 @@
+appId: ${APP_ID}
+name: Cancel invoice - Storno gets the next number with negative amounts, the original is cancelled, a corrected copy is a draft (A3)
+tags:
+  - p6
+---
+# SPEC A3 / §7 flow 5. Example F: the cancellation of Example A is -1.330,29 €.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: doc-row-1
+- scrollUntilVisible:
+    element:
+      id: action-cancel
+    centerElement: true
+- tapOn:
+    id: action-cancel
+- tapOn: "Cancel invoice"
+- tapOn: "Create corrected copy"
+# The corrected copy is a draft in the editor; back to the cancelled original.
+- assertVisible:
+    id: editor-screen
+- runFlow: subflows/go-back.yaml
+- scrollUntilVisible:
+    element:
+      id: doc-status
+    direction: UP
+    centerElement: true
+- assertVisible:
+    id: doc-status
+    text: Cancelled
+- scrollUntilVisible:
+    element:
+      id: related-2
+    centerElement: true
+- tapOn:
+    id: related-2
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0002
+- assertVisible:
+    id: doc-status
+    text: Issued
+- scrollUntilVisible:
+    element:
+      id: totals-gross
+    centerElement: true
+- assertVisible:
+    id: totals-gross
+    text: ".*-€1,330\\.29.*"
+# A cancellation cannot be cancelled again and takes no payment.
+- assertNotVisible:
+    id: action-cancel
+- assertNotVisible:
+    id: action-record-payment
+# The list shows both; the original no longer counts as outstanding.
+- runFlow: subflows/go-back.yaml
+- runFlow: subflows/go-back.yaml
+- assertVisible:
+    id: summary-outstanding-EUR
+    text: "€0\\.00"

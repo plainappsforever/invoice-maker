@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+---
+# Adds a fixture (env FIXTURE: business | repeat | examples | issued) on top of a reset.
+- openLink: invoicemaker-dev://debug/seed?fixture=${FIXTURE}
+- tapOn:
+    text: Open
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 30000

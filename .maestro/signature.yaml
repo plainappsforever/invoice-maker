@@ -1,0 +1,80 @@
+appId: ${APP_ID}
+name: Signatures - the business draws its signature; a client accepts an issued quote with a finger signature; the signed copy is shared
+tags:
+  - v15p1
+---
+# V1.5 P1 (L140-a). Maestro draws with a swipe on the pad; finger feel is a real-phone check.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: quote
+- openLink: invoicemaker-dev://business
+- tapOn:
+    text: Open
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: business-signature-draw
+    centerElement: true
+- tapOn:
+    id: business-signature-draw
+- tapOn:
+    id: signature-save
+- assertVisible:
+    id: signature-error
+    text: Please sign in the box first.
+- swipe:
+    from:
+      id: signature-pad
+    direction: RIGHT
+    duration: 600
+- tapOn:
+    id: signature-save
+- scrollUntilVisible:
+    element:
+      id: business-signature-image
+    centerElement: true
+- assertVisible:
+    id: business-signature-remove
+- openLink: invoicemaker-dev://document/1
+- tapOn:
+    text: Open
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: action-accept-sign
+    centerElement: true
+- tapOn:
+    id: action-accept-sign
+- assertVisible:
+    id: signature-signer
+- tapOn:
+    id: signature-signer
+- inputText: Eva Klein
+- runFlow: subflows/hide-keyboard.yaml
+- swipe:
+    from:
+      id: signature-pad
+    direction: LEFT
+    duration: 600
+- tapOn:
+    id: signature-save
+- scrollUntilVisible:
+    element:
+      id: quote-signed-by
+    centerElement: true
+- assertVisible:
+    id: quote-signed-by
+    text: Signed by Eva Klein on .*
+- assertVisible:
+    id: quote-signature
+- tapOn:
+    id: action-share-signed
+- extendedWaitUntil:
+    visible: "AN-20\\d\\d-0001 M.{1,2}ller GmbH signed(\\.pdf)?"
+    timeout: 60000
+- runFlow: subflows/dismiss-share.yaml

@@ -1,0 +1,4 @@
+appId: ${APP_ID}
+---
+# Busy-waits MS milliseconds (Maestro has no sleep; used to let the 400 ms autosave pass).
+- evalScript: ${(function () { var end = new Date().getTime() + Number(MS); while (new Date().getTime() < end) {} })()}

@@ -1,0 +1,52 @@
+appId: ${APP_ID}
+name: About and privacy - privacy text, placeholder address, licences, German texts
+tags:
+  - p6
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: tab-settings
+- scrollUntilVisible:
+    element:
+      id: settings-about
+    centerElement: true
+- tapOn:
+    id: settings-about
+- assertVisible:
+    id: about-screen
+- assertVisible: "Everything is stored on this phone.*"
+- assertVisible: "The app's own code makes no network connections.*"
+- assertVisible:
+    id: about-privacy-backup
+    text: "Phone backups: .*"
+- scrollUntilVisible:
+    element:
+      id: about-privacy-url
+    centerElement: true
+- assertVisible:
+    id: about-privacy-url
+    text: "https://taulon.org/apps/invoice-maker/privacy"
+- scrollUntilVisible:
+    element:
+      id: licence-react-native
+    centerElement: true
+- assertVisible:
+    id: licence-react-native
+    text: ".*MIT.*"
+# The same screen in German.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: de
+- tapOn:
+    id: tab-settings
+- scrollUntilVisible:
+    element:
+      id: settings-about
+    centerElement: true
+- tapOn:
+    id: settings-about
+- assertVisible: "Alles wird auf diesem Telefon gespeichert.*"

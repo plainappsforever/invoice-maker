@@ -1,0 +1,16 @@
+# .oss-scrub-allow - findings of scripts/oss/scrub-check.sh that a human checked and accepts (public file, no values).
+# Reviewed 2026-10-16 for the first public source release.
+P-EMAIL src/engine/__fixtures__/*        # invented business contacts for the contact-parser tests
+P-PHONE src/engine/__fixtures__/*        # invented phone numbers and the standard example IBAN in parser fixtures
+P-FIRSTNAME src/engine/__fixtures__/*    # common first name in an invented "... Beispiel" (example) contact
+P-EMAIL *.test.ts                        # made-up addresses in unit tests
+P-PHONE *.test.ts                        # made-up numbers and the standard example IBAN in unit tests
+P-EMAIL .maestro/capture-card.yaml       # text of the synthetic sample business card
+P-PHONE .maestro/capture-card.yaml       # text of the synthetic sample business card
+I-OCR assets/fixtures/card-de.jpg        # synthetic sample business card of a made-up company
+P-EMAIL src/app/data.tsx                 # made-up sample CSV for development builds
+P-PHONE src/engine/iban.ts               # standard example IBAN in a comment
+P-PHONE src/render/test-models.ts        # made-up business phone for render tests
+P-PKGID README.md      # placeholder app id com.tim.*: the identifier changes before the first store release
+P-PKGID app.config.ts  # placeholder app id com.tim.*: the identifier changes before the first store release
+P-PKGID fdroid/*       # placeholder app id com.tim.*: the identifier changes before the first store release

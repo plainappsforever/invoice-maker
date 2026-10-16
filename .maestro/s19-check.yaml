@@ -1,0 +1,58 @@
+appId: ${APP_ID}
+name: §19 - a draft with VAT lines is blocked at Issue, one tap sets the lines to 0 %
+tags:
+  - p35
+---
+# P3.5 note (D51): switching to small business converts drafts, but a duplicate of an old invoice brings VAT lines
+# back into a §19 business. The check blocks Issue with an error and offers the one-tap fix.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-tax
+- tapOn:
+    id: vat-small-business
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- tapOn:
+    id: doc-row-1
+- scrollUntilVisible:
+    element:
+      id: action-duplicate
+    centerElement: true
+- tapOn:
+    id: action-duplicate
+- assertVisible:
+    id: editor-screen
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: check-item-small_business_vat
+- assertVisible:
+    id: check-blocked
+- tapOn:
+    id: check-fix-small_business_vat
+- assertNotVisible:
+    id: check-item-small_business_vat
+- assertNotVisible:
+    id: check-blocked
+- tapOn:
+    id: issue-anyway
+- assertVisible:
+    id: doc-number
+    text: RE-20\d\d-0002
+- scrollUntilVisible:
+    element:
+      id: totals-gross
+    centerElement: true
+- assertVisible:
+    id: totals-gross
+    text: €1,122.66

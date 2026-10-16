@@ -1,0 +1,50 @@
+appId: ${APP_ID}
+name: Release - back up (share sheet with the file), Delete all in two steps keeps numbering, Reset numbering warns
+tags:
+  - release
+---
+# Run near the end: it empties the app. Restoring needs the system file picker, which no flow drives (L11 row); the dev
+# flow backup-restore proves the same validate/summary/restore code with a dev button.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-data
+- tapOn:
+    id: backup-now
+- extendedWaitUntil:
+    visible: "invoice-maker-backup-20\\d\\d-\\d\\d-\\d\\d(\\.json)?"
+    timeout: 30000
+- runFlow: ../subflows/dismiss-share-any.yaml
+- scrollUntilVisible:
+    element:
+      id: delete-all
+    centerElement: true
+- tapOn:
+    id: delete-all
+- assertVisible: "Delete all data?"
+- assertVisible: ".*Numbering continues after the last number used.*"
+- tapOn: "Continue"
+- assertVisible: "Really delete everything?"
+- tapOn: "Delete everything"
+- assertVisible:
+    id: delete-message
+    text: All data was deleted.
+- scrollUntilVisible:
+    element:
+      id: reset-numbering
+    centerElement: true
+- tapOn:
+    id: reset-numbering
+- assertVisible: "Reset numbering?"
+- tapOn: "Cancel"
+- runFlow: ../subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- assertVisible:
+    id: documents-empty

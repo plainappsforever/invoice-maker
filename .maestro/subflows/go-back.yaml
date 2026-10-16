@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+---
+# Back one screen on both platforms (iOS has no hardware back).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: 11%,9%
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

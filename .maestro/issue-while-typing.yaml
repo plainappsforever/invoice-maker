@@ -1,0 +1,40 @@
+appId: ${APP_ID}
+name: Issue while typing - text typed just before Issue on a draft that cannot be issued survives (write queue, D50)
+tags:
+  - p35
+---
+# P3.5 note: type in a draft and tap Issue at once (no wait, no blur). The draft has no lines, so Issue is refused;
+# the typed text must still be saved (the autosave and the Issue go through one write queue on expo-sqlite).
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: new-document
+- scrollUntilVisible:
+    element:
+      id: reference
+    speed: 95
+    timeout: 90000
+    centerElement: true
+- tapOn:
+    id: reference
+- inputText: QUEUE-TEST-77
+- scrollUntilVisible:
+    element:
+      id: issue-button
+    direction: UP
+    speed: 95
+    timeout: 90000
+- tapOn:
+    id: issue-button
+- assertVisible:
+    id: check-item-no_lines
+- runFlow: subflows/go-back.yaml
+- scrollUntilVisible:
+    element:
+      id: reference
+    speed: 95
+    timeout: 90000
+    centerElement: true
+- assertVisible: QUEUE-TEST-77

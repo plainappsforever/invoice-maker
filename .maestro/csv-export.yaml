@@ -1,0 +1,34 @@
+appId: ${APP_ID}
+name: CSV export - period chooser, the documents file opens the share sheet
+tags:
+  - p6
+---
+# SPEC §7 flow 8. The columns, separators and formula guard are proven by Jest (src/data/csv.test.ts); here the file is
+# written on the device and handed to the share sheet.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-data
+- scrollUntilVisible:
+    element:
+      id: csv-documents
+    centerElement: true
+- tapOn:
+    id: csv-period-all
+- tapOn:
+    id: csv-documents
+- extendedWaitUntil:
+    visible: "invoice-maker-documents-20\\d\\d-\\d\\d-\\d\\d(\\.csv)?"
+    timeout: 30000
+- runFlow: subflows/dismiss-share-any.yaml
+- assertVisible:
+    id: csv-message
+    text: "File ready: invoice-maker-documents-.*"

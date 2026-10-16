@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+---
+# Absolute precondition for every flow: fresh process, all data deleted, UI language set (env UI_LANG: en | de).
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- openLink: invoicemaker-dev://debug/reset?lang=${UI_LANG}
+- tapOn:
+    text: Open
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 30000

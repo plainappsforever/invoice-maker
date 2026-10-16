@@ -1,0 +1,30 @@
+appId: ${APP_ID}
+name: Release - CSV export of all documents opens the share sheet
+tags:
+  - release
+---
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-data
+- scrollUntilVisible:
+    element:
+      id: csv-documents
+    centerElement: true
+- tapOn:
+    id: csv-period-all
+- tapOn:
+    id: csv-documents
+- extendedWaitUntil:
+    visible: "invoice-maker-documents-20\\d\\d-\\d\\d-\\d\\d(\\.csv)?"
+    timeout: 30000
+- runFlow: ../subflows/dismiss-share-any.yaml
+- assertVisible:
+    id: csv-message
+    text: "File ready: invoice-maker-documents-.*"

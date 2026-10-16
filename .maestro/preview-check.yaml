@@ -1,0 +1,65 @@
+appId: ${APP_ID}
+name: Preview check - a draft without business details shows the missing items in the preview, Fix opens the form, layout chips change the draft
+tags:
+  - p5
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- tapOn:
+    id: new-document
+- assertVisible:
+    id: editor-screen
+- scrollUntilVisible:
+    element:
+      id: add-line
+    centerElement: true
+- tapOn:
+    id: add-line
+- tapOn:
+    id: line-name
+- inputText: Webdesign
+- tapOn:
+    id: line-price
+- inputText: "100"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: line-save
+    centerElement: true
+- tapOn:
+    id: line-save
+- tapOn:
+    id: preview-button
+- assertVisible:
+    id: preview-screen
+- assertVisible:
+    id: preview-draft-note
+- assertVisible:
+    id: check-item-business_name
+- assertVisible:
+    id: check-not-advice
+# per-document layout (D68): Letter + Modern for this draft only
+- scrollUntilVisible:
+    element:
+      id: layout-paper-LETTER
+    centerElement: true
+- tapOn:
+    id: layout-paper-LETTER
+- tapOn:
+    id: layout-template-modern
+- assertVisible:
+    id: preview-web
+- scrollUntilVisible:
+    element:
+      id: check-fix-business_name
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: check-fix-business_name
+- assertVisible:
+    id: business-screen
+- runFlow: subflows/go-back.yaml
+- assertVisible:
+    id: preview-screen

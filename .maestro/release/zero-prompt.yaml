@@ -1,0 +1,29 @@
+appId: ${APP_ID}
+name: Release - zero prompt on a fresh install
+tags:
+  - release
+---
+# Release (preview) builds compile the dev links out, so there is no reset: run this FIRST on a fresh install
+# (scripts/e2e.sh <ios|android> preview .maestro/release/zero-prompt.yaml). It is the first-launch experience (D29).
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: new-document
+    timeout: 90000
+- assertVisible:
+    id: setup-card
+- assertNotVisible:
+    text: Allow.*
+- assertNotVisible:
+    id: .*permission_allow.*
+- assertNotVisible:
+    text: Don.t allow.*
+- assertNotVisible:
+    text: .*Rate .*
+- tapOn:
+    id: new-document
+- assertVisible:
+    id: editor-screen
+- assertVisible:
+    id: issue-button

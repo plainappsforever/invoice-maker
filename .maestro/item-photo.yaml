@@ -1,0 +1,55 @@
+appId: ${APP_ID}
+name: Item photo - a catalog item gets a photo (stored downscaled), it is still there after reopening
+tags:
+  - v15p1
+---
+# V1.5 P1 (L153-a). The camera and photo picker are real-phone checks; the dev button stores the bundled photo
+# through the same downscale-and-store path.
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- openLink: invoicemaker-dev://item/new
+- tapOn:
+    text: Open
+    optional: true
+- tapOn:
+    id: item-name
+- inputText: Stuhl Eiche
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: item-photo-sample
+    centerElement: true
+- tapOn:
+    id: item-photo-sample
+- extendedWaitUntil:
+    visible:
+      id: item-photo-image
+    timeout: 20000
+- assertVisible:
+    id: item-photo-remove
+- scrollUntilVisible:
+    element:
+      id: item-price
+    centerElement: true
+- tapOn:
+    id: item-price
+- inputText: "199"
+- runFlow: subflows/hide-keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: item-save
+    centerElement: true
+- tapOn:
+    id: item-save
+- openLink: invoicemaker-dev://item/1
+- tapOn:
+    text: Open
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: item-photo-image
+    centerElement: true
+- assertVisible:
+    id: item-photo-image

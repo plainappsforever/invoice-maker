@@ -1,0 +1,66 @@
+appId: ${APP_ID}
+name: Delete all data - two steps, then nothing is left; numbering continues; reset numbering is a separate warned action
+tags:
+  - p6
+---
+- runFlow:
+    file: subflows/reset.yaml
+    env:
+      UI_LANG: en
+- runFlow:
+    file: subflows/seed.yaml
+    env:
+      FIXTURE: issued
+- tapOn:
+    id: tab-settings
+- tapOn:
+    id: settings-data
+- scrollUntilVisible:
+    element:
+      id: delete-all
+    centerElement: true
+- tapOn:
+    id: delete-all
+- assertVisible: "Delete all data?"
+- assertVisible: ".*Numbering continues after the last number used.*"
+# Step 1 can be cancelled: nothing happens.
+- tapOn: "Cancel"
+- assertNotVisible:
+    id: delete-message
+    text: All data was deleted.
+- scrollUntilVisible:
+    element:
+      id: delete-all
+    centerElement: true
+- tapOn:
+    id: delete-all
+- tapOn: "Continue"
+- assertVisible: "Really delete everything?"
+- tapOn: "Delete everything"
+- assertVisible:
+    id: delete-message
+    text: All data was deleted.
+# "Reset numbering" is separate and warns; cancelling it changes nothing.
+- scrollUntilVisible:
+    element:
+      id: reset-numbering
+    centerElement: true
+- tapOn:
+    id: reset-numbering
+- assertVisible: "Reset numbering?"
+- assertVisible: ".*issued a second time.*"
+- tapOn: "Cancel"
+- assertVisible:
+    id: delete-message
+    text: All data was deleted.
+- runFlow: subflows/go-back.yaml
+- tapOn:
+    id: tab-invoices
+- assertVisible:
+    id: documents-empty
+- assertVisible:
+    id: setup-card
+- tapOn:
+    id: tab-clients
+- assertVisible:
+    id: clients-empty

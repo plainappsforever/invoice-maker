@@ -1,0 +1,16 @@
+appId: ${APP_ID}
+---
+# iOS has no keyboard-dismiss action Maestro can use here: a short drag in the scroll view dismisses it (keyboardDismissMode on-drag).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: 50%,45%
+          end: 50%,43%
+          duration: 200
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
