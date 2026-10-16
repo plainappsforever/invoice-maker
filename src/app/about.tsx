@@ -9,7 +9,7 @@ import { LICENCES } from '@/data/licences.generated';
 import { t } from '@/i18n';
 
 /** Placeholder address of the online privacy policy (owner to-do before the store listing, V1_PLAN "Owner to-dos"). */
-export const PRIVACY_URL = 'https://taulon.org/apps/invoice-maker/privacy';
+export const PRIVACY_URL = 'https://plainapps.dfdsfdsfsdf.workers.dev/apps/invoice-maker/privacy';
 
 /**
  * Settings → About & privacy (SPEC §11, A12). The privacy text states only what the code does: no account, no analytics,

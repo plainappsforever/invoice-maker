@@ -28,7 +28,7 @@ tags:
     centerElement: true
 - assertVisible:
     id: about-privacy-url
-    text: "https://taulon.org/apps/invoice-maker/privacy"
+    text: "https://plainapps.dfdsfdsfsdf.workers.dev/apps/invoice-maker/privacy"
 - scrollUntilVisible:
     element:
       id: licence-react-native
